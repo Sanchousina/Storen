@@ -1,25 +1,23 @@
 import { Connection } from './index.js';
 
-export const all = () => {
+export const all = async () => {
     return new Promise((resolve, reject) => {
         Connection.query(`SELECT * from Advert`, (err, results) => {
             if(err){
                 reject(err);
-            }else{
-                resolve(results);
             }
+            resolve(results);
         });
     });
 }
 
-export const one = (id) => {
+export const one = async (id) => {
     return new Promise((resolve, reject) => {
         Connection.query(`SELECT * from Advert WHERE advert_id = ?`, [id] , (err, results) => {
             if(err){
                 reject(err);
-            }else{
-                resolve(results[0]);
             }
+            resolve(results[0]);
         });
     });
 }

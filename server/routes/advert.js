@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
     try{
-        let adverts = DB.advert.all();
+        let adverts = await DB.advert.all();
         res.json(adverts);
     }catch(err){
         console.log(err);
@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
     try{
-        let advert = DB.advert.one(req.params.id);
+        let advert = await DB.advert.one(req.params.id);
         res.json(advert);
     }catch(err){
         console.log(err);
