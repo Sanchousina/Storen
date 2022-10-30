@@ -13,4 +13,14 @@ router.get('/', async (req, res) => {
     }
 });
 
+router.get('/:id', async (req, res) => {
+    try{
+        let advert = DB.advert.one(req.params.id);
+        res.json(advert);
+    }catch(err){
+        console.log(err);
+        res.sendStatus(500);
+    }
+});
+
 export default router;
