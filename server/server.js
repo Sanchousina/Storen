@@ -5,6 +5,9 @@ import warehouseRouter from './routes/warehouse.js';
 
 const app = express();
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
 app.use('/users', userRouter);
 app.use('/adverts', advertRouter);
 app.use('/warehouses', warehouseRouter);
