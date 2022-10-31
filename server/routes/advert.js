@@ -23,4 +23,23 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+router.post('/create', async (req, res) => {
+    const warehouse_id = req.body.warehouse_id;
+    const user_id = req.body.user_id;
+    const creation_date = req.body.creation_date;
+    const rental_rate = req.body.rental_rate;
+    const description = req.body.description;
+    const document_url = req.body.original_document_url;
+
+    try{
+        let newAdvertId = await DB.advert.createNew(
+            [warehouse_id, user_id, creation_date, rental_rate, description, document_url]
+        );
+        res.status(201).json(newAdvertId);
+    }catch(err){
+        console.log(err);
+        res.sendStatus(500);
+    }
+});
+
 export default router;

@@ -22,7 +22,6 @@ export const createNew = async(arr) => {
                 if(err){
                     reject(err);
                 }
-                //console.log(results.insertId);
                 resolve(results.insertId);
             }
         );
