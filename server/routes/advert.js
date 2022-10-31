@@ -42,4 +42,18 @@ router.post('/create', async (req, res) => {
     }
 });
 
+router.put('/update/:id', async (req, res) => {
+    const id = req.params.id;
+    const rental_rate = req.body.rental_rate;
+    const description = req.body.description;
+
+    try{
+        await DB.advert.update([rental_rate, description, id]);
+        res.sendStatus(200);
+    }catch(err){
+        console.log(err);
+        res.sendStatus(500);
+    }
+})
+
 export default router;

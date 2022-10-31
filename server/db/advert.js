@@ -36,8 +36,24 @@ export const createNew = async (arr) => {
     });
 }
 
+export const update = async (arr) => {
+    return new Promise((resolve, reject) => {
+        Connection.query(
+            `UPDATE Advert
+            SET rental_rate = ?, description = ?
+            WHERE advert_id = ?`,
+            [...arr] , (err, results) => {
+            if(err){
+                reject(err);
+            }
+            resolve();
+        });
+    });
+}
+
 export default {
     all,
     one,
-    createNew
+    createNew,
+    update
 }
