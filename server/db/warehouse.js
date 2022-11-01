@@ -15,9 +15,9 @@ export const one = async(id) => {
 export const createNew = async(arr) => {
     return new Promise((resolve, reject) => {
         Connection.query(
-            `INSERT INTO Warehouse (city, street, house_num, zip, type, available_space, total_space, seiling_height, 
+            `INSERT INTO Warehouse (advert_id, city, street, house_num, zip, type, available_space, total_space, seiling_height, 
                 temperature, humidity, year_built, parking_slots, use_machinery)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [...arr], 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [...arr], 
             (err, results) => {
                 if(err){
                     reject(err);
@@ -49,5 +49,5 @@ export const update = async(arr) => {
 export default {
     one,
     createNew,
-    update
+    update,
 }

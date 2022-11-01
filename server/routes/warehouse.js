@@ -20,10 +20,11 @@ router.post('/create',
     warehouseSchema,
     validateRequest,
     async (req, res) => {
+    const advert_id = req.body.advert_id;
     const attributes = getAttributes(req);
 
     try{
-        let newWarehouseId = await DB.warehouse.createNew(attributes);
+        let newWarehouseId = await DB.warehouse.createNew([advert_id, ...attributes]);
         res.status(201).json(newWarehouseId);
     }catch(err){
         console.log(err);
