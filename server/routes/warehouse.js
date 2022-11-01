@@ -1,5 +1,7 @@
 import * as express from 'express';
 import DB from '../db/index.js';
+import { warehouseSchema } from '../schemas/warehouse_schema.js';
+import { validateRequest } from '../middleware/validate_request.js';
 
 const router = express.Router();
 router.use(express.json());
@@ -14,7 +16,10 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.post('/create', async (req, res) => {
+router.post('/create',
+    warehouseSchema,
+    validateRequest,
+    async (req, res) => {
     let attributes = getAttributes(req);
 
     try{

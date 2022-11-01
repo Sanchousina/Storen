@@ -1,6 +1,6 @@
 import { body } from 'express-validator';
 
-export const advertScema = [
+export const advertSchema = [
     body("rental_rate")
         .exists({checkFalsy: true})
         .withMessage("rental rate is required")

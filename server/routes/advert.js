@@ -1,7 +1,7 @@
 import * as express from 'express';
 import DB from '../db/index.js';
 import { validateRequest } from '../middleware/validate_request.js';
-import { advertScema } from '../schemas/advert_schema.js';
+import { advertSchema } from '../schemas/advert_schema.js';
 
 const router = express.Router();
 
@@ -26,7 +26,7 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/create', 
-    advertScema, 
+    advertSchema, 
     validateRequest,
     async (req, res) => {
     const warehouse_id = req.body.warehouse_id;
@@ -48,7 +48,7 @@ router.post('/create',
 });
 
 router.put('/update/:id', 
-    advertScema, 
+    advertSchema, 
     validateRequest, 
     async (req, res) => {
     const id = req.params.id;
