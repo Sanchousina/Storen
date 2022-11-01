@@ -28,7 +28,22 @@ export const one = async (id) => {
     });
 }
 
+export const createNew = async (arr) => {
+    return new Promise((resolve, reject) => {
+        Connection.query(
+            `INSERT INTO Contract (user_id, warehouse_id, initial_date, expiry_date, space_size, contract_url, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?)`, [...arr],
+            (err, results) => {
+            if(err){
+                reject(err);
+            }
+            resolve(results.insertId);
+        });
+    });
+}
+
 export default {
     all,
-    one
+    one,
+    createNew
 }
