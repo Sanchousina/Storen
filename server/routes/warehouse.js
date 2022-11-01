@@ -20,11 +20,27 @@ router.post('/create',
     warehouseSchema,
     validateRequest,
     async (req, res) => {
-    let attributes = getAttributes(req);
+    const attributes = getAttributes(req);
 
     try{
         let newWarehouseId = await DB.warehouse.createNew(attributes);
         res.status(201).json(newWarehouseId);
+    }catch(err){
+        console.log(err);
+        res.sendStatus(500);
+    }
+});
+
+router.put('/update/:id', 
+    warehouseSchema,
+    validateRequest,
+    async (req, res) => {
+    const id = req.params.id;
+    const attributes = getAttributes(req);
+
+    try{
+        await DB.warehouse.update([...attributes, id]);
+        res.sendStatus(200);
     }catch(err){
         console.log(err);
         res.sendStatus(500);
