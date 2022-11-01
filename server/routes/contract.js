@@ -51,4 +51,16 @@ router.post('/:user_id/contracts/create',
     }
 });
 
+router.put('/:user_id/contracts/:contract_id/reject', async(req, res) => {
+    const contract_id = req.params.contract_id;
+
+    try{
+        await DB.contract.reject(contract_id);
+        res.sendStatus(200);
+    }catch(err){
+        console.log(err);
+        res.sendStatus(500);
+    }
+});
+
 export default router;

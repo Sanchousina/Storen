@@ -42,8 +42,24 @@ export const createNew = async (arr) => {
     });
 }
 
+export const reject = async (id) => {
+    return new Promise((resolve, reject) => {
+        Connection.query(
+            `UPDATE Contract
+            SET status = "rejected"
+            WHERE contract_id = ?`, [id],
+            (err, results) => {
+            if(err){
+                reject(err);
+            }
+            resolve();
+        });
+    });
+}
+
 export default {
     all,
     one,
-    createNew
+    createNew,
+    reject
 }
