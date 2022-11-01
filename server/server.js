@@ -12,11 +12,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/users', userRouter);
 app.use('/adverts', advertRouter);
 app.use('/warehouses', warehouseRouter);
-app.use('/users/:user_id/contracts', contractRouter);
-
-app.get('/date', async(req, res) => {
-    res.send(getCurrentDate());
-})
+app.use('/users', contractRouter);
 
 app.listen(5000, () => {
     console.log("Server is running on port 5000");
