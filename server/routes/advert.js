@@ -1,5 +1,7 @@
 import * as express from 'express';
 import DB from '../db/index.js';
+import { validateRequest } from '../middleware/validate_request.js';
+import { advertScema } from '../schemas/advert_schema.js';
 
 const router = express.Router();
 
@@ -23,7 +25,10 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.post('/create', async (req, res) => {
+router.post('/create', 
+    advertScema, 
+    validateRequest,
+    async (req, res) => {
     const warehouse_id = req.body.warehouse_id;
     const user_id = req.body.user_id;
     const creation_date = req.body.creation_date;
@@ -42,7 +47,10 @@ router.post('/create', async (req, res) => {
     }
 });
 
-router.put('/update/:id', async (req, res) => {
+router.put('/update/:id', 
+    advertScema, 
+    validateRequest, 
+    async (req, res) => {
     const id = req.params.id;
     const rental_rate = req.body.rental_rate;
     const description = req.body.description;
