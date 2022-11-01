@@ -4,6 +4,7 @@ import user from './user.js';
 import advert from './advert.js';
 import warehouse from './warehouse.js';
 import contract from './contract.js';
+import favorite from './favorite.js';
 
 export const Connection = mysql.createConnection(config.mysql);
 
@@ -15,5 +16,6 @@ export default {
     user,
     advert,
     warehouse,
-    contract
+    contract,
+    favorite
 }
