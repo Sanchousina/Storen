@@ -14,6 +14,10 @@ app.use('/adverts', advertRouter);
 app.use('/warehouses', warehouseRouter);
 app.use('/users/:user_id/contracts', contractRouter);
 
+app.get('/date', async(req, res) => {
+    res.send(getCurrentDate());
+})
+
 app.listen(5000, () => {
     console.log("Server is running on port 5000");
 })
