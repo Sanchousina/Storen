@@ -57,9 +57,25 @@ export const reject = async (id) => {
     });
 }
 
+export const deleteOne = async (id) => {
+    console.log(id);
+    return new Promise((resolve, reject) => {
+        Connection.query(
+            `DELETE FROM Contract
+            WHERE contract_id = ?`, [id],
+            (err, results) => {
+            if(err){
+                reject(err);
+            }
+            resolve();
+        });
+    });
+}
+
 export default {
     all,
     one,
     createNew,
-    reject
+    reject,
+    deleteOne
 }
