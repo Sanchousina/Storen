@@ -20,7 +20,7 @@ router.get('/:user_id/contracts/accepted', async (req, res) => {
     const user_id = req.params.user_id;
 
     try{
-        let contracts = await DB.contract.allAccepted(user_id);
+        let contracts = await DB.contract.allByStatus(user_id, "accepted");
         res.status(200).json(contracts);
     }catch(err){
         res.sendStatus(500);
@@ -31,7 +31,7 @@ router.get('/:user_id/contracts/rejected', async (req, res) => {
     const user_id = req.params.user_id;
 
     try{
-        let contracts = await DB.contract.allRejected(user_id);
+        let contracts = await DB.contract.allByStatus(user_id, "rejected");
         res.status(200).json(contracts);
     }catch(err){
         res.sendStatus(500);
@@ -42,7 +42,7 @@ router.get('/:user_id/contracts/pending', async (req, res) => {
     const user_id = req.params.user_id;
 
     try{
-        let contracts = await DB.contract.allPending(user_id);
+        let contracts = await DB.contract.allByStatus(user_id, "pending");
         res.status(200).json(contracts);
     }catch(err){
         res.sendStatus(500);

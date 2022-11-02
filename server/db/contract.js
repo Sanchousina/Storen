@@ -14,39 +14,11 @@ export const all = async (id) => {
     });
 }
 
-export const allAccepted = async (id) => {
+export const allByStatus = async (id, status) => {
     return new Promise((resolve, reject) => {
         Connection.query(
             `SELECT * FROM Contract
-            WHERE user_id = ? && status = "accepted"`, [id],
-            (err, results) => {
-            if(err){
-                reject(err);
-            }
-            resolve(results);
-        });
-    });
-}
-
-export const allRejected = async (id) => {
-    return new Promise((resolve, reject) => {
-        Connection.query(
-            `SELECT * FROM Contract
-            WHERE user_id = ? && status = "rejected"`, [id],
-            (err, results) => {
-            if(err){
-                reject(err);
-            }
-            resolve(results);
-        });
-    });
-}
-
-export const allPending = async (id) => {
-    return new Promise((resolve, reject) => {
-        Connection.query(
-            `SELECT * FROM Contract
-            WHERE user_id = ? && status = "pending"`, [id],
+            WHERE user_id = ? && status = ?`, [id, status],
             (err, results) => {
             if(err){
                 reject(err);
@@ -131,9 +103,7 @@ export const deleteOne = async (id) => {
 
 export default {
     all,
-    allAccepted,
-    allRejected,
-    allPending,
+    allByStatus,
     one,
     createNew,
     reject,
