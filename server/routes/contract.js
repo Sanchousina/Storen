@@ -16,6 +16,40 @@ router.get('/:user_id/contracts', async (req, res) => {
     }
 });
 
+router.get('/:user_id/contracts/accepted', async (req, res) => {
+    const user_id = req.params.user_id;
+
+    try{
+        let contracts = await DB.contract.allAccepted(user_id);
+        res.status(200).json(contracts);
+    }catch(err){
+        res.sendStatus(500);
+    }
+});
+
+router.get('/:user_id/contracts/rejected', async (req, res) => {
+    const user_id = req.params.user_id;
+
+    try{
+        let contracts = await DB.contract.allRejected(user_id);
+        res.status(200).json(contracts);
+    }catch(err){
+        res.sendStatus(500);
+    }
+});
+
+router.get('/:user_id/contracts/pending', async (req, res) => {
+    const user_id = req.params.user_id;
+
+    try{
+        let contracts = await DB.contract.allPending(user_id);
+        res.status(200).json(contracts);
+    }catch(err){
+        res.sendStatus(500);
+    }
+});
+
+
 router.get('/:user_id/contracts/:contract_id', async (req, res) => {
     const contract_id = req.params.contract_id;
 
@@ -56,6 +90,18 @@ router.put('/:user_id/contracts/:contract_id/reject', async (req, res) => {
 
     try{
         await DB.contract.reject(contract_id);
+        res.sendStatus(200);
+    }catch(err){
+        console.log(err);
+        res.sendStatus(500);
+    }
+});
+
+router.put('/:user_id/contracts/:contract_id/accept', async (req, res) => {
+    const contract_id = req.params.contract_id;
+
+    try{
+        await DB.contract.accept(contract_id);
         res.sendStatus(200);
     }catch(err){
         console.log(err);
