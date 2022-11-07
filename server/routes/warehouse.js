@@ -6,9 +6,9 @@ import { validateRequest } from '../middleware/validate_request.js';
 const router = express.Router();
 router.use(express.json());
 
-router.get('/:id', async (req, res) => {
+router.get('/:advert_id', async (req, res) => {
     try{
-        let warehouse = await DB.warehouse.one(req.params.id);
+        let warehouse = await DB.warehouse.one(req.params.advert_id);
         res.json(warehouse[0]);
     }catch(err){
         console.log(err);
