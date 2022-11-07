@@ -4,6 +4,7 @@ import advertRouter from './routes/advert.js';
 import warehouseRouter from './routes/warehouse.js';
 import contractRouter from './routes/contract.js';
 import favoriteRouter from './routes/favorite.js';
+import galleryRouter from './routes/gallery.js'
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use('/adverts', advertRouter);
 app.use('/warehouses', warehouseRouter);
 app.use('/users', contractRouter);
 app.use('/users', favoriteRouter);
+app.use('/adverts', galleryRouter);
 
 app.listen(5000, () => {
     console.log("Server is running on port 5000");
