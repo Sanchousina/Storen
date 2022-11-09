@@ -6,9 +6,12 @@ import { advertSchema } from '../schemas/advert_schema.js';
 import getCurrentDate from '../helpers/currentDate.js';
 import { s3 } from '../helpers/s3Client.js';
 import { PutObjectCommand } from "@aws-sdk/client-s3";
+import crypto from 'crypto';
 import dotenv from 'dotenv';
 
 dotenv.config();
+
+const DOCS_FOLDER = 'docs/';
 
 const router = express.Router();
 const storage = multer.memoryStorage();
@@ -44,12 +47,11 @@ router.post('/create',
     const description = req.body.description;
     const title = req.body.title;
     
-    sendToS3(req.file);
+    const fileName = DOCS_FOLDER + randomName();
+    sendToS3(req.file, fileName);
 
-    const document_url = req.file.originalname;
+    const document_url = fileName;
     const creation_date = getCurrentDate();
-
-    res.send({});
 
     try{
         let newAdvertId = await DB.advert.createNew(
@@ -92,15 +94,17 @@ router.delete('/delete/:id', async(req, res) => {
     }
 });
 
-async function sendToS3(file){
+const sendToS3 = async (file, fileName) => {
     const params = {
         Bucket: process.env.BUCKET_NAME,
-        Key: file.originalname,
+        Key: fileName,
         Body: file.buffer,
         ContentType: file.mimetype,
     }
     const cmd = new PutObjectCommand(params);
     await s3.send(cmd);
 }
+
+const randomName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex');
 
 export default router;
