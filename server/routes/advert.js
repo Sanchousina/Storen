@@ -1,10 +1,18 @@
 import * as express from 'express';
+import multer from 'multer';
 import DB from '../db/index.js';
 import { validateRequest } from '../middleware/validate_request.js';
 import { advertSchema } from '../schemas/advert_schema.js';
 import getCurrentDate from '../helpers/currentDate.js';
+import { s3 } from '../helpers/s3Client.js';
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const router = express.Router();
+const storage = multer.memoryStorage();
+const upload = multer({storage: storage});
 
 router.get('/', async (req, res) => {
     try{
@@ -26,16 +34,22 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.post('/create', 
+router.post('/create',
+    [upload.single('file'),
     advertSchema, 
-    validateRequest,
+    validateRequest],
     async (req, res) => {
     const user_id = req.body.user_id;
     const rental_rate = req.body.rental_rate;
     const description = req.body.description;
-    const document_url = req.body.original_document_url;
     const title = req.body.title;
+    
+    sendToS3(req.file);
+
+    const document_url = req.file.originalname;
     const creation_date = getCurrentDate();
+
+    res.send({});
 
     try{
         let newAdvertId = await DB.advert.createNew(
@@ -77,5 +91,16 @@ router.delete('/delete/:id', async(req, res) => {
         res.sendStatus(500);
     }
 });
+
+async function sendToS3(file){
+    const params = {
+        Bucket: process.env.BUCKET_NAME,
+        Key: file.originalname,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+    }
+    const cmd = new PutObjectCommand(params);
+    await s3.send(cmd);
+}
 
 export default router;
