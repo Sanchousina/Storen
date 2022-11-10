@@ -42,6 +42,15 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try{
         let advert = await DB.advert.one(req.params.id);
+
+        const getObjectParams = {
+            Bucket: process.env.BUCKET_NAME,
+            Key: advert.document_name,
+        }
+        const cmd = new GetObjectCommand(getObjectParams);
+        let url = await getSignedUrl(s3, cmd, { expiresIn: 3600 });
+        advert.document_url = url;
+
         res.json(advert);
     }catch(err){
         console.log(err);
