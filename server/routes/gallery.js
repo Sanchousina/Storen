@@ -1,7 +1,7 @@
 import * as express from 'express';
 import DB from '../db/index.js';
 import multer from 'multer';
-import { s3, sendToS3, deleteFromS3, randomName } from '../helpers/s3Client.js';
+import { s3, sendToS3, deleteFromS3, getS3Url, randomName } from '../helpers/s3Client.js';
 import { GetObjectCommand} from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
@@ -14,17 +14,9 @@ const upload = multer({storage: storage});
 router.get('/adverts/:advert_id/images', async (req, res) => {
     try{
         let images = await DB.gallery.all(req.params.advert_id);
-
         for (const image of images){
-            const getObjectParams = {
-                Bucket: process.env.BUCKET_NAME,
-                Key: image.image_name,
-            }
-            const cmd = new GetObjectCommand(getObjectParams);
-            let url = await getSignedUrl(s3, cmd, { expiresIn: 3600 });
-            image.image_url = url;
+            image.image_url = await getS3Url(image.image_name);
         }
-
         res.json(images);
     }catch(err){
         console.log(err);
@@ -35,7 +27,6 @@ router.get('/adverts/:advert_id/images', async (req, res) => {
 router.post('/adverts/:advert_id/images', 
     upload.array('images', 10),
     async (req, res) => {
-
         for(const file of req.files){
             const fileName = IMG_FOLDER + randomName();
             sendToS3(file, fileName);
@@ -46,7 +37,6 @@ router.post('/adverts/:advert_id/images',
                 res.sendStatus(500);
             }
         }
-
         res.sendStatus(200);
 });
 
