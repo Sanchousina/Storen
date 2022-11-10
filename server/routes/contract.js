@@ -3,9 +3,7 @@ import DB from '../db/index.js'
 import { contractSchema } from '../schemas/contract_schema.js';
 import { validateRequest } from '../middleware/validate_request.js';
 import multer from 'multer';
-import { s3, sendToS3, deleteFromS3, randomName } from '../helpers/s3Client.js';
-import { GetObjectCommand} from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { sendToS3, deleteFromS3, getS3Url, randomName } from '../helpers/s3Client.js';
 
 const DOCS_FOLDER = 'docs/';
 
@@ -63,6 +61,7 @@ router.get('/contracts/:contract_id', async (req, res) => {
 
     try{
         let contract = await DB.contract.one(contract_id);
+        contract.contract_url = await getS3Url(contract.contract_name);
         res.status(200).json(contract);
     }catch(err){
         console.log(err);
