@@ -4,10 +4,11 @@ import DB from '../db/index.js';
 import { validateRequest } from '../middleware/validate_request.js';
 import { advertSchema } from '../schemas/advert_schema.js';
 import getCurrentDate from '../helpers/currentDate.js';
-import { s3, sendToS3, randomName } from '../helpers/s3Client.js';
+import { s3, sendToS3, deleteFromS3, randomName } from '../helpers/s3Client.js';
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import dotenv from 'dotenv';
+
 
 dotenv.config();
 
@@ -57,7 +58,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.post('/create',
+router.post('/',
     [upload.single('file'),
     advertSchema, 
     validateRequest],
@@ -84,7 +85,7 @@ router.post('/create',
     }
 });
 
-router.put('/update/:id', 
+router.put('/:id', 
     advertSchema, 
     validateRequest, 
     async (req, res) => {
@@ -102,10 +103,13 @@ router.put('/update/:id',
     }
 });
 
-router.delete('/delete/:id', async(req, res) => {
+router.delete('/:id', async(req, res) => {
     const advertId = req.params.id;
    
     try{
+        const doc_name = await DB.advert.getDoc(advertId);
+        await deleteFromS3(doc_name);
+
         await DB.advert.deleteOne(advertId);
         res.sendStatus(200);
     }catch(err){

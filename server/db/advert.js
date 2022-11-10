@@ -32,6 +32,19 @@ export const one = async (id) => {
     });
 }
 
+export const getDoc = async (id) => {
+    return new Promise((resolve, reject) => {
+        Connection.query(
+            `SELECT document_name from Advert 
+            WHERE advert_id = ?`, [id] , (err, results) => {
+            if(err){
+                reject(err);
+            }
+            resolve(results[0].document_name);
+        });
+    });
+}
+
 export const createNew = async (arr) => {
     return new Promise((resolve, reject) => {
         Connection.query(
@@ -79,6 +92,7 @@ export const deleteOne = async (id) => {
 export default {
     all,
     one,
+    getDoc,
     createNew,
     update,
     deleteOne
