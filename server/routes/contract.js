@@ -7,7 +7,11 @@ import { s3, sendToS3, deleteFromS3, randomName } from '../helpers/s3Client.js';
 import { GetObjectCommand} from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
+const DOCS_FOLDER = 'docs/';
+
 const router = express.Router();
+const storage = multer.memoryStorage();
+const upload = multer({storage: storage});
 
 router.get('/users/:user_id/contracts', async (req, res) => {
     const user_id = req.params.user_id;
@@ -66,21 +70,23 @@ router.get('/contracts/:contract_id', async (req, res) => {
     }
 });
 
-router.post('/:user_id/contracts', 
+router.post('/users/:user_id/contracts',
+    [upload.single('file'),
     contractSchema,
-    validateRequest,
+    validateRequest],
     async (req, res) => {
     const user_id = req.params.user_id;
     const warehouse_id = req.body.warehouse_id;
     const initial_date = req.body.initial_date;
     const expiry_date = req.body.expiry_date;
     const space_size = req.body.space_size;
-    const contract_url = req.body.contract_url;
-    const status = req.body.status;
+
+    const contract_name = DOCS_FOLDER + randomName();
+    await sendToS3(req.file, contract_name);
     
     try{
         let newContractId = await DB.contract.createNew(
-            [user_id, warehouse_id, initial_date, expiry_date, space_size, contract_url, status]
+            [user_id, warehouse_id, initial_date, expiry_date, space_size, contract_name]
         );
         res.status(201).json(newContractId);
     }catch(err){
@@ -119,7 +125,7 @@ router.delete('/contracts/:contract_id', async (req, res) => {
     try{
         const contract_name = await DB.contract.getContract(contract_id);
         await deleteFromS3(contract_name);
-        
+
         await DB.contract.deleteOne(contract_id);
         res.sendStatus(200);
     }catch(err){

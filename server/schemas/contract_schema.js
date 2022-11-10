@@ -16,14 +16,4 @@ export const contractSchema = [
         .withMessage("Space size should not be null")
         .isNumeric()
         .withMessage("Space size should be numeric"),
-    body("contract_url")
-        .exists({checkFalsy: true})
-        .withMessage("Contract should not be null")
-        .isString()
-        .withMessage("Contract should be string"),
-    body("status")
-        .exists({checkFalsy: true})
-        .withMessage("Status should not be null")
-        .isIn(['pending','accepted','rejected'])
-        .withMessage("Status should one of the offered values")
 ];
