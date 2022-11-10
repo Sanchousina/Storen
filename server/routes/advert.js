@@ -4,11 +4,8 @@ import DB from '../db/index.js';
 import { validateRequest } from '../middleware/validate_request.js';
 import { advertSchema } from '../schemas/advert_schema.js';
 import getCurrentDate from '../helpers/currentDate.js';
-import { s3, sendToS3, deleteFromS3, randomName } from '../helpers/s3Client.js';
-import { GetObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { sendToS3, deleteFromS3, getS3Url, randomName } from '../helpers/s3Client.js';
 import dotenv from 'dotenv';
-
 
 dotenv.config();
 
@@ -21,17 +18,9 @@ const upload = multer({storage: storage});
 router.get('/', async (req, res) => {
     try{
         let adverts = await DB.advert.all();
-
         for (const advert of adverts){
-            const getObjectParams = {
-                Bucket: process.env.BUCKET_NAME,
-                Key: advert.image_name,
-            }
-            const cmd = new GetObjectCommand(getObjectParams);
-            let url = await getSignedUrl(s3, cmd, { expiresIn: 3600 });
-            advert.image_url = url;
+            advert.image_url = await getS3Url(advert.image_name);
         }
-
         res.json(adverts);
     }catch(err){
         console.log(err);
@@ -42,15 +31,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try{
         let advert = await DB.advert.one(req.params.id);
-
-        const getObjectParams = {
-            Bucket: process.env.BUCKET_NAME,
-            Key: advert.document_name,
-        }
-        const cmd = new GetObjectCommand(getObjectParams);
-        let url = await getSignedUrl(s3, cmd, { expiresIn: 3600 });
-        advert.document_url = url;
-
+        advert.document_url = await getS3Url(advert.document_name);
         res.json(advert);
     }catch(err){
         console.log(err);
@@ -67,12 +48,10 @@ router.post('/',
     const rental_rate = req.body.rental_rate;
     const description = req.body.description;
     const title = req.body.title;
-    
-    const fileName = DOCS_FOLDER + randomName();
-    sendToS3(req.file, fileName);
-
-    const document_name = fileName;
     const creation_date = getCurrentDate();
+    
+    const document_name = DOCS_FOLDER + randomName();
+    sendToS3(req.file, document_name);
 
     try{
         let newAdvertId = await DB.advert.createNew(

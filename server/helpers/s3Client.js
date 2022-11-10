@@ -1,5 +1,6 @@
 import { S3Client } from "@aws-sdk/client-s3";
-import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { GetObjectCommand, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import crypto from 'crypto';
 import dotenv from 'dotenv';
 
@@ -35,6 +36,16 @@ export const deleteFromS3 = async (fileName) => {
     }
     const cmd = new DeleteObjectCommand(params);
     await s3.send(cmd);
+}
+
+export const getS3Url = async (fileName) => {
+    const getObjectParams = {
+        Bucket: process.env.BUCKET_NAME,
+        Key: fileName,
+    }
+    const cmd = new GetObjectCommand(getObjectParams);
+    let url = await getSignedUrl(s3, cmd, { expiresIn: 3600 });
+    return url;
 }
 
 export const randomName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex');
