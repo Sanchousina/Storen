@@ -2,10 +2,14 @@ import * as express from 'express';
 import DB from '../db/index.js'
 import { contractSchema } from '../schemas/contract_schema.js';
 import { validateRequest } from '../middleware/validate_request.js';
+import multer from 'multer';
+import { s3, sendToS3, deleteFromS3, randomName } from '../helpers/s3Client.js';
+import { GetObjectCommand} from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const router = express.Router();
 
-router.get('/:user_id/contracts', async (req, res) => {
+router.get('/users/:user_id/contracts', async (req, res) => {
     const user_id = req.params.user_id;
 
     try{
@@ -16,7 +20,7 @@ router.get('/:user_id/contracts', async (req, res) => {
     }
 });
 
-router.get('/:user_id/contracts/accepted', async (req, res) => {
+router.get('/users/:user_id/contracts/accepted', async (req, res) => {
     const user_id = req.params.user_id;
 
     try{
@@ -27,7 +31,7 @@ router.get('/:user_id/contracts/accepted', async (req, res) => {
     }
 });
 
-router.get('/:user_id/contracts/rejected', async (req, res) => {
+router.get('/users/:user_id/contracts/rejected', async (req, res) => {
     const user_id = req.params.user_id;
 
     try{
@@ -38,7 +42,7 @@ router.get('/:user_id/contracts/rejected', async (req, res) => {
     }
 });
 
-router.get('/:user_id/contracts/pending', async (req, res) => {
+router.get('/users/:user_id/contracts/pending', async (req, res) => {
     const user_id = req.params.user_id;
 
     try{
@@ -50,7 +54,7 @@ router.get('/:user_id/contracts/pending', async (req, res) => {
 });
 
 
-router.get('/:user_id/contracts/:contract_id', async (req, res) => {
+router.get('/contracts/:contract_id', async (req, res) => {
     const contract_id = req.params.contract_id;
 
     try{
@@ -62,7 +66,7 @@ router.get('/:user_id/contracts/:contract_id', async (req, res) => {
     }
 });
 
-router.post('/:user_id/contracts/create', 
+router.post('/:user_id/contracts', 
     contractSchema,
     validateRequest,
     async (req, res) => {
@@ -85,7 +89,7 @@ router.post('/:user_id/contracts/create',
     }
 });
 
-router.put('/:user_id/contracts/:contract_id/reject', async (req, res) => {
+router.put('/contracts/:contract_id/reject', async (req, res) => {
     const contract_id = req.params.contract_id;
 
     try{
@@ -97,7 +101,7 @@ router.put('/:user_id/contracts/:contract_id/reject', async (req, res) => {
     }
 });
 
-router.put('/:user_id/contracts/:contract_id/accept', async (req, res) => {
+router.put('/contracts/:contract_id/accept', async (req, res) => {
     const contract_id = req.params.contract_id;
 
     try{
@@ -109,10 +113,13 @@ router.put('/:user_id/contracts/:contract_id/accept', async (req, res) => {
     }
 });
 
-router.delete('/:user_id/contracts/:contract_id/delete', async (req, res) => {
+router.delete('/contracts/:contract_id', async (req, res) => {
     const contract_id = req.params.contract_id;
 
     try{
+        const contract_name = await DB.contract.getContract(contract_id);
+        await deleteFromS3(contract_name);
+        
         await DB.contract.deleteOne(contract_id);
         res.sendStatus(200);
     }catch(err){

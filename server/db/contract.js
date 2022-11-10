@@ -42,10 +42,24 @@ export const one = async (id) => {
     });
 }
 
+export const getContract = async (id) => {
+    return new Promise((resolve, reject) => {
+        Connection.query(
+            `SELECT contract_name FROM Contract
+            WHERE contract_id = ?`, [id],
+            (err, results) => {
+            if(err){
+                reject(err);
+            }
+            resolve(results[0].contract_name);
+        });
+    });
+}
+
 export const createNew = async (arr) => {
     return new Promise((resolve, reject) => {
         Connection.query(
-            `INSERT INTO Contract (user_id, warehouse_id, initial_date, expiry_date, space_size, contract_url, status)
+            `INSERT INTO Contract (user_id, warehouse_id, initial_date, expiry_date, space_size, contract_name, status)
             VALUES (?, ?, ?, ?, ?, ?, ?)`, [...arr],
             (err, results) => {
             if(err){
@@ -109,4 +123,5 @@ export default {
     reject,
     accept,
     deleteOne,
+    getContract
 }

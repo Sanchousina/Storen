@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/users', userRouter);
 app.use('/adverts', advertRouter);
 app.use('/warehouses', warehouseRouter);
-app.use('/users', contractRouter);
+app.use(contractRouter);
 app.use('/users', favoriteRouter);
 app.use(galleryRouter);
 
