@@ -1,5 +1,5 @@
 import { S3Client } from "@aws-sdk/client-s3";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import crypto from 'crypto';
 import dotenv from 'dotenv';
 
@@ -25,6 +25,15 @@ export const sendToS3 = async (file, fileName) => {
         ContentType: file.mimetype,
     }
     const cmd = new PutObjectCommand(params);
+    await s3.send(cmd);
+}
+
+export const deleteFromS3 = async (fileName) => {
+    const params = {
+        Bucket: process.env.BUCKET_NAME,
+        Key: fileName,
+    }
+    const cmd = new DeleteObjectCommand(params);
     await s3.send(cmd);
 }
 

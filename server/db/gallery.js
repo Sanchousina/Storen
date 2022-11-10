@@ -3,13 +3,28 @@ import { Connection } from './index.js'
 export const all = async (id) => {
     return new Promise((resolve, reject) => {
         Connection.query(
-            `SELECT image_name FROM gallery
+            `SELECT * FROM gallery
             WHERE advert_id = ?`, [id],
             (err, results) => {
                 if(err){
                     reject(err);
                 }
                 resolve(results);
+            }
+        );
+    });
+}
+
+export const one = async (id) => {
+    return new Promise((resolve, reject) => {
+        Connection.query(
+            `SELECT * FROM gallery
+            WHERE image_id = ?`, [id],
+            (err, results) => {
+                if(err){
+                    reject(err);
+                }
+                resolve(results[0]);
             }
         );
     });
@@ -30,7 +45,40 @@ export const insert = async (id, image_name) => {
     });
 }
 
+export const deleteAll = async (id) => {
+    return new Promise((resolve, reject) => {
+        Connection.query(
+            `DELETE FROM Gallery
+            WHERE advert_id = ?`, [id],
+            (err, results) => {
+                if(err){
+                    reject(err);
+                }
+                resolve(results);
+            }
+        );
+    });
+}
+
+export const deleteOne = async (id) => {
+    return new Promise((resolve, reject) => {
+        Connection.query(
+            `DELETE FROM Gallery
+            WHERE image_id = ?`, [id],
+            (err, results) => {
+                if(err){
+                    reject(err);
+                }
+                resolve(results);
+            }
+        );
+    });
+}
+
 export default {
     all,
-    insert
+    one,
+    insert,
+    deleteAll,
+    deleteOne
 }
