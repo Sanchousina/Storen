@@ -15,6 +15,22 @@ export const all = async (id) => {
     });
 }
 
+export const insert = async (id, image_name) => {
+    return new Promise((resolve, reject) => {
+        Connection.query(
+            `INSERT INTO Gallery (advert_id, image_name)
+            VALUES (?, ?)`, [id, image_name],
+            (err, results) => {
+                if(err){
+                    reject(err);
+                }
+                resolve(results);
+            }
+        );
+    });
+}
+
 export default {
-    all
+    all,
+    insert
 }

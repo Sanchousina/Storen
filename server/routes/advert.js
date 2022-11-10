@@ -4,10 +4,9 @@ import DB from '../db/index.js';
 import { validateRequest } from '../middleware/validate_request.js';
 import { advertSchema } from '../schemas/advert_schema.js';
 import getCurrentDate from '../helpers/currentDate.js';
-import { s3 } from '../helpers/s3Client.js';
-import { PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import { s3, sendToS3, randomName } from '../helpers/s3Client.js';
+import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import crypto from 'crypto';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -114,18 +113,5 @@ router.delete('/delete/:id', async(req, res) => {
         res.sendStatus(500);
     }
 });
-
-const sendToS3 = async (file, fileName) => {
-    const params = {
-        Bucket: process.env.BUCKET_NAME,
-        Key: fileName,
-        Body: file.buffer,
-        ContentType: file.mimetype,
-    }
-    const cmd = new PutObjectCommand(params);
-    await s3.send(cmd);
-}
-
-const randomName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex');
 
 export default router;
