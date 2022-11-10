@@ -4,7 +4,7 @@ export const all = async () => {
     return new Promise((resolve, reject) => {
         Connection.query(
             `SELECT advert.advert_id, advert.title, warehouse.city, 
-            warehouse.available_space, warehouse.type, MIN(gallery.image_url) as image_url
+            warehouse.available_space, warehouse.type, MIN(gallery.image_name) as image_name
             FROM advert
             INNER JOIN warehouse ON advert.advert_id = warehouse.advert_id
             INNER JOIN gallery ON warehouse.advert_id = gallery.advert_id
@@ -35,7 +35,7 @@ export const one = async (id) => {
 export const createNew = async (arr) => {
     return new Promise((resolve, reject) => {
         Connection.query(
-            `INSERT INTO Advert (user_id, creation_date, rental_rate, description, original_document_url, title)
+            `INSERT INTO Advert (user_id, creation_date, rental_rate, description, document_name, title)
             VALUES (?, ?, ?, ?, ?, ?)`,
             [...arr] , (err, results) => {
             if(err){

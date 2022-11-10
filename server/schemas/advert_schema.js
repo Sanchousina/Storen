@@ -10,5 +10,10 @@ export const advertSchema = [
         .exists()
         .withMessage("description can be null, but should exists")
         .trim()
-        .escape()
+        .escape(),
+    body("title")
+        .exists({checkFalsy: true})
+        .withMessage("title is required")
+        .isString()
+        .withMessage("title should be string"),
 ];

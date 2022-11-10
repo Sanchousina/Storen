@@ -5,7 +5,8 @@ import { validateRequest } from '../middleware/validate_request.js';
 import { advertSchema } from '../schemas/advert_schema.js';
 import getCurrentDate from '../helpers/currentDate.js';
 import { s3 } from '../helpers/s3Client.js';
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import crypto from 'crypto';
 import dotenv from 'dotenv';
 
@@ -20,6 +21,17 @@ const upload = multer({storage: storage});
 router.get('/', async (req, res) => {
     try{
         let adverts = await DB.advert.all();
+
+        for (const advert of adverts){
+            const getObjectParams = {
+                Bucket: process.env.BUCKET_NAME,
+                Key: advert.image_name,
+            }
+            const cmd = new GetObjectCommand(getObjectParams);
+            let url = await getSignedUrl(s3, cmd, { expiresIn: 3600 });
+            advert.image_url = url;
+        }
+
         res.json(adverts);
     }catch(err){
         console.log(err);
@@ -50,12 +62,12 @@ router.post('/create',
     const fileName = DOCS_FOLDER + randomName();
     sendToS3(req.file, fileName);
 
-    const document_url = fileName;
+    const document_name = fileName;
     const creation_date = getCurrentDate();
 
     try{
         let newAdvertId = await DB.advert.createNew(
-            [user_id, creation_date, rental_rate, description, document_url, title]
+            [user_id, creation_date, rental_rate, description, document_name, title]
         );
         res.status(201).json(newAdvertId);
     }catch(err){
