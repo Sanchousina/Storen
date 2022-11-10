@@ -16,6 +16,9 @@ router.get('/users/:user_id/contracts', async (req, res) => {
 
     try{
         let contracts = await DB.contract.all(user_id);
+        for(const contract of contracts){
+            contract.contract_url = await getS3Url(contract.contract_name);
+        }
         res.status(200).json(contracts);
     }catch(err){
         res.sendStatus(500);
@@ -27,6 +30,9 @@ router.get('/users/:user_id/contracts/accepted', async (req, res) => {
 
     try{
         let contracts = await DB.contract.allByStatus(user_id, "accepted");
+        for(const contract of contracts){
+            contract.contract_url = await getS3Url(contract.contract_name);
+        }
         res.status(200).json(contracts);
     }catch(err){
         res.sendStatus(500);
@@ -38,6 +44,9 @@ router.get('/users/:user_id/contracts/rejected', async (req, res) => {
 
     try{
         let contracts = await DB.contract.allByStatus(user_id, "rejected");
+        for(const contract of contracts){
+            contract.contract_url = await getS3Url(contract.contract_name);
+        }
         res.status(200).json(contracts);
     }catch(err){
         res.sendStatus(500);
@@ -49,6 +58,9 @@ router.get('/users/:user_id/contracts/pending', async (req, res) => {
 
     try{
         let contracts = await DB.contract.allByStatus(user_id, "pending");
+        for(const contract of contracts){
+            contract.contract_url = await getS3Url(contract.contract_name);
+        }
         res.status(200).json(contracts);
     }catch(err){
         res.sendStatus(500);
