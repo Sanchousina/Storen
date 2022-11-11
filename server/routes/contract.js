@@ -118,10 +118,16 @@ router.put('/contracts/:contract_id/reject', async (req, res) => {
     }
 });
 
-router.put('/contracts/:contract_id/accept', async (req, res) => {
+//THINK ABOUT: REWRITE FILE OR ADD NEW FILE?
+router.put('/contracts/:contract_id/accept',
+    upload.single('file'), 
+    async (req, res) => {
     const contract_id = req.params.contract_id;
 
     try{
+        const contract_name = await DB.contract.getContract(contract_id);
+        await sendToS3(req.file, contract_name);
+
         await DB.contract.accept(contract_id);
         res.sendStatus(200);
     }catch(err){
