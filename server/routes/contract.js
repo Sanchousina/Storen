@@ -13,9 +13,15 @@ const upload = multer({storage: storage});
 
 router.get('/users/:user_id/contracts', async (req, res) => {
     const user_id = req.params.user_id;
+    const status = req.query.status;
 
     try{
-        let contracts = await DB.contract.all(user_id);
+        let contracts;
+        if(status === undefined){
+            contracts = await DB.contract.all(user_id);
+        }else{
+            contracts = await DB.contract.allByStatus(user_id, status);
+        }
         for(const contract of contracts){
             contract.contract_url = await getS3Url(contract.contract_name);
         }
@@ -24,49 +30,6 @@ router.get('/users/:user_id/contracts', async (req, res) => {
         res.sendStatus(500);
     }
 });
-
-router.get('/users/:user_id/contracts/accepted', async (req, res) => {
-    const user_id = req.params.user_id;
-
-    try{
-        let contracts = await DB.contract.allByStatus(user_id, "accepted");
-        for(const contract of contracts){
-            contract.contract_url = await getS3Url(contract.contract_name);
-        }
-        res.status(200).json(contracts);
-    }catch(err){
-        res.sendStatus(500);
-    }
-});
-
-router.get('/users/:user_id/contracts/rejected', async (req, res) => {
-    const user_id = req.params.user_id;
-
-    try{
-        let contracts = await DB.contract.allByStatus(user_id, "rejected");
-        for(const contract of contracts){
-            contract.contract_url = await getS3Url(contract.contract_name);
-        }
-        res.status(200).json(contracts);
-    }catch(err){
-        res.sendStatus(500);
-    }
-});
-
-router.get('/users/:user_id/contracts/pending', async (req, res) => {
-    const user_id = req.params.user_id;
-
-    try{
-        let contracts = await DB.contract.allByStatus(user_id, "pending");
-        for(const contract of contracts){
-            contract.contract_url = await getS3Url(contract.contract_name);
-        }
-        res.status(200).json(contracts);
-    }catch(err){
-        res.sendStatus(500);
-    }
-});
-
 
 router.get('/contracts/:contract_id', async (req, res) => {
     const contract_id = req.params.contract_id;
@@ -123,16 +86,19 @@ router.put('/contracts/:contract_id/accept',
     upload.single('file'), 
     async (req, res) => {
     const contract_id = req.params.contract_id;
-
-    try{
-        const contract_name = await DB.contract.getContract(contract_id);
-        await sendToS3(req.file, contract_name);
-
-        await DB.contract.accept(contract_id);
-        res.sendStatus(200);
-    }catch(err){
-        console.log(err);
-        res.sendStatus(500);
+    if(req.file != undefined){
+        try{
+            const contract_name = await DB.contract.getContract(contract_id);
+            await sendToS3(req.file, contract_name);
+    
+            await DB.contract.accept(contract_id);
+            res.sendStatus(200);
+        }catch(err){
+            console.log(err);
+            res.sendStatus(500);
+        }
+    }else{
+        res.sendStatus(400);
     }
 });
 
