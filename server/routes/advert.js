@@ -16,8 +16,14 @@ const storage = multer.memoryStorage();
 const upload = multer({storage: storage});
 
 router.get('/', async (req, res) => {
+    const city = req.query.city;
     try{
-        let adverts = await DB.advert.all();
+        let adverts;
+        if(city === undefined){
+            adverts = await DB.advert.all();
+        }else{
+            adverts = await DB.advert.allByCity(city);
+        }
         for (const advert of adverts){
             advert.image_url = await getS3Url(advert.image_name);
         }
