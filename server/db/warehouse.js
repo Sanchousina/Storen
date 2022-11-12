@@ -46,8 +46,26 @@ export const update = async(arr) => {
     });
 }
 
+export const updateAvailableSpace = async (space, id) => {
+    return new Promise ((resolve, reject) => {
+        Connection.query(
+            `UPDATE warehouse
+            SET available_space = available_space - ?
+            WHERE warehouse_id = ?`,
+            [space, id],
+            (err, results) => {
+                if(err){
+                    reject(err);
+                }
+                resolve();
+            }
+        )
+    })
+}
+
 export default {
     one,
     createNew,
     update,
+    updateAvailableSpace
 }

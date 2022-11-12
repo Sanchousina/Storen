@@ -42,16 +42,17 @@ export const one = async (id) => {
     });
 }
 
-export const getContract = async (id) => {
+export const getContractInfo = async (id) => {
     return new Promise((resolve, reject) => {
         Connection.query(
-            `SELECT contract_name FROM Contract
+            `SELECT contract_name, space_size, warehouse_id 
+            FROM Contract
             WHERE contract_id = ?`, [id],
             (err, results) => {
             if(err){
                 reject(err);
             }
-            resolve(results[0].contract_name);
+            resolve(results[0]);
         });
     });
 }
@@ -124,5 +125,5 @@ export default {
     reject,
     accept,
     deleteOne,
-    getContract
+    getContractInfo
 }

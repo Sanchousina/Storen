@@ -88,9 +88,9 @@ router.put('/contracts/:contract_id/accept',
     const contract_id = req.params.contract_id;
     if(req.file != undefined){
         try{
-            const contract_name = await DB.contract.getContract(contract_id);
-            await sendToS3(req.file, contract_name);
-    
+            const contractInfo = await DB.contract.getContractInfo(contract_id);
+            await sendToS3(req.file, contractInfo.contract_name);
+            await DB.warehouse.updateAvailableSpace(contractInfo.space_size, contractInfo.warehouse_id);
             await DB.contract.accept(contract_id);
             res.sendStatus(200);
         }catch(err){
