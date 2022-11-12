@@ -18,6 +18,18 @@ router.get('/:user_id/favorite', async (req, res) => {
     }
 });
 
+router.get('/:user_id/favorite/:advert_id', async (req, res) => {
+    const user_id = req.params.user_id;
+    const advert_id = req.params.advert_id;
+    try{
+        const isFavorite = await DB.favorite.checkIfFavorite(advert_id, user_id);
+        res.json(isFavorite);
+    }catch(err){
+        console.log(err);
+        res.sendStatus(500);
+    }
+});
+
 router.post('/:user_id/favorite/adverts/:advert_id', async (req, res) => {
     const advert_id = req.params.advert_id;
     const user_id = req.params.user_id;
@@ -30,7 +42,7 @@ router.post('/:user_id/favorite/adverts/:advert_id', async (req, res) => {
     }
 });
 
-router.delete('/:user_id/unfavorite/adverts/:advert_id', async (req, res) => {
+router.delete('/:user_id/favorite/adverts/:advert_id', async (req, res) => {
     const advert_id = req.params.advert_id;
     const user_id = req.params.user_id;
     try{

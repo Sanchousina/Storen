@@ -21,6 +21,22 @@ export const all = async(user) => {
     });
 }
 
+export const checkIfFavorite = async (advert, user) => {
+    return new Promise ((resolve, reject) => {
+        Connection.query(
+            `SELECT EXISTS (SELECT advert_id from favorite
+            WHERE advert_id = ? AND user_id = ?) AS check_fav;`, 
+            [advert, user],
+            (err, results) => {
+                if(err){
+                    reject(err);
+                }
+                resolve(results[0].check_fav);
+            }
+        )
+    })
+}
+
 export const toFavorite = async(advert, user) => {
     return new Promise((resolve, reject) => {
         Connection.query(
@@ -52,5 +68,6 @@ export const unFavorite = async(advert, user) => {
 export default {
     all,
     toFavorite,
-    unFavorite
+    unFavorite,
+    checkIfFavorite
 }
