@@ -26,7 +26,8 @@ router.get('/', async (req, res) => {
                 : await DB.advert.all();
         }else if(source == 'filter'){
             const whereSql = await filterSql(req);
-            adverts = await DB.advert.all(whereSql);
+            const sortSql = sortSQL(req);
+            adverts = await DB.advert.all(whereSql, sortSql);
         }else{
             adverts = await DB.advert.all();
         }
@@ -39,6 +40,17 @@ router.get('/', async (req, res) => {
         res.sendStatus(500);
     }
 });
+
+const sortSQL = (req) => {
+    const sortBy = req.query.sortby;
+    const direction = req.query.direction ? req.query.direction: 'asc';
+    let sql = ``;
+    if(sortBy != undefined){
+        sql += `ORDER BY ${sortBy} ${direction}`;
+    }
+
+    return sql;
+}
 
 const filterSql = async (req) => {
     const enumType = await DB.warehouse.getTypes();

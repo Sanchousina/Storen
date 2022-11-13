@@ -1,6 +1,6 @@
 import { Connection } from './index.js';
 
-export const all = async (sql = ``) => {
+export const all = async (whereSql = ``, sortSql = ``) => {
     return new Promise((resolve, reject) => {
         Connection.query(
             `SELECT advert.advert_id, title, city, 
@@ -8,8 +8,9 @@ export const all = async (sql = ``) => {
             FROM advert
             INNER JOIN warehouse ON advert.advert_id = warehouse.advert_id
             INNER JOIN gallery ON warehouse.advert_id = gallery.advert_id
-            ${sql}
-            GROUP BY advert_id`, 
+            ${whereSql}
+            GROUP BY advert_id
+            ${sortSql}`, 
             (err, results) => {
             if(err){
                 reject(err);
