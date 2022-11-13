@@ -1,6 +1,6 @@
 import { Connection } from './index.js';
 
-export const all = async (sql) => {
+export const all = async (sql = ``) => {
     return new Promise((resolve, reject) => {
         Connection.query(
             `SELECT advert.advert_id, title, city, 
