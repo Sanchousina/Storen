@@ -1,13 +1,14 @@
 import { Connection } from './index.js';
 
-export const all = async () => {
+export const all = async (sql) => {
     return new Promise((resolve, reject) => {
         Connection.query(
-            `SELECT advert.advert_id, advert.title, warehouse.city, 
-            warehouse.available_space, warehouse.type, MIN(gallery.image_name) as image_name
+            `SELECT advert.advert_id, title, city, 
+            available_space, rental_rate, type, MIN(image_name) as image_name
             FROM advert
             INNER JOIN warehouse ON advert.advert_id = warehouse.advert_id
             INNER JOIN gallery ON warehouse.advert_id = gallery.advert_id
+            ${sql}
             GROUP BY advert_id`, 
             (err, results) => {
             if(err){

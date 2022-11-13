@@ -59,6 +59,26 @@ export const updateAvailableSpace = async (space, id) => {
                 }
                 resolve();
             }
+        );
+    });
+}
+
+export const getTypes = async () => {
+    return new Promise ((resolve, reject) => {
+        Connection.query(
+            `SELECT TRIM(TRAILING ")" FROM SUBSTRING(COLUMN_TYPE,6)) as typeVals
+            FROM information_schema.COLUMNS
+            WHERE TABLE_NAME='Warehouse'
+            AND COLUMN_NAME='type'`,
+            (err, results) => {
+                if(err){
+                    reject(err);
+                }
+                const typeVals =results[0].typeVals;
+                const tempString = typeVals.replace(/\'/g, '');
+                const enumArray = tempString.split(',');
+                resolve(enumArray);
+            }
         )
     })
 }
@@ -67,5 +87,6 @@ export default {
     one,
     createNew,
     update,
-    updateAvailableSpace
+    updateAvailableSpace,
+    getTypes
 }
