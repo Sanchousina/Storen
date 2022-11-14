@@ -1,8 +1,8 @@
-import { Connection } from "./index.js";
+import { connection } from "./index.js";
 
 export const all = async (id) => {
     return new Promise((resolve, reject) => {
-        Connection.query(
+        connection.query(
             `SELECT * FROM Contract
             WHERE user_id = ?`, [id],
             (err, results) => {
@@ -16,7 +16,7 @@ export const all = async (id) => {
 
 export const allByStatus = async (id, status) => {
     return new Promise((resolve, reject) => {
-        Connection.query(
+        connection.query(
             `SELECT * FROM Contract
             WHERE user_id = ? && status = ?`, [id, status],
             (err, results) => {
@@ -30,7 +30,7 @@ export const allByStatus = async (id, status) => {
 
 export const one = async (id) => {
     return new Promise((resolve, reject) => {
-        Connection.query(
+        connection.query(
             `SELECT * FROM Contract
             WHERE contract_id = ?`, [id],
             (err, results) => {
@@ -44,7 +44,7 @@ export const one = async (id) => {
 
 export const getContractInfo = async (id) => {
     return new Promise((resolve, reject) => {
-        Connection.query(
+        connection.query(
             `SELECT contract_name, space_size, warehouse_id 
             FROM Contract
             WHERE contract_id = ?`, [id],
@@ -59,7 +59,7 @@ export const getContractInfo = async (id) => {
 
 export const createNew = async (arr) => {
     return new Promise((resolve, reject) => {
-        Connection.query(
+        connection.query(
             `INSERT INTO Contract (user_id, warehouse_id, initial_date, expiry_date, space_size, contract_name, status)
             VALUES (?, ?, ?, ?, ?, ?, "pending")`, [...arr],
             (err, results) => {
@@ -74,7 +74,7 @@ export const createNew = async (arr) => {
 
 export const reject = async (id) => {
     return new Promise((resolve, reject) => {
-        Connection.query(
+        connection.query(
             `UPDATE Contract
             SET status = "rejected"
             WHERE contract_id = ?`, [id],
@@ -89,7 +89,7 @@ export const reject = async (id) => {
 
 export const accept = async (id) => {
     return new Promise((resolve, reject) => {
-        Connection.query(
+        connection.query(
             `UPDATE Contract
             SET status = "accepted"
             WHERE contract_id = ?`, [id],
@@ -105,7 +105,7 @@ export const accept = async (id) => {
 export const deleteOne = async (id) => {
     console.log(id);
     return new Promise((resolve, reject) => {
-        Connection.query(
+        connection.query(
             `DELETE FROM Contract
             WHERE contract_id = ?`, [id],
             (err, results) => {

@@ -1,4 +1,5 @@
 import * as express from 'express';
+import { connection } from '../db/index.js';
 import multer from 'multer';
 import DB from '../db/index.js';
 import { validateRequest } from '../middleware/validate_request.js';
@@ -25,7 +26,7 @@ router.get('/', async (req, res) => {
                 await DB.advert.allByCity(city) 
                 : await DB.advert.all();
         }else if(source == 'filter'){
-            const whereSql = await filterSql(req);
+            const whereSql = await filterSQL(req);
             const sortSql = sortSQL(req);
             adverts = await DB.advert.all(whereSql, sortSql);
         }else{
@@ -52,11 +53,11 @@ const sortSQL = (req) => {
     return sql;
 }
 
-const filterSql = async (req) => {
+const filterSQL = async (req) => {
     const enumType = await DB.warehouse.getTypes();
-
-    const city = req.query.city ? req.query.city : 'all';
-    const zip = req.query.zip ? req.query.zip : 'all';
+    
+    const city = req.query.city ? connection.escape(req.query.city) : 'all';
+    const zip = req.query.zip ? connection.escape(req.query.zip) : 'all';
     const type = req.query.type ? req.query.type.split(',') : enumType;
     const avspacemin = req.query.avspacemin;
     const avspacemax = req.query.avspacemax;

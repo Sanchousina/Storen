@@ -7,9 +7,9 @@ import contract from './contract.js';
 import favorite from './favorite.js';
 import gallery from './gallery.js';
 
-export const Connection = mysql.createConnection(config.mysql);
+export const connection = mysql.createConnection(config.mysql);
 
-Connection.connect(err => {
+connection.connect(err => {
     console.log(err);
 });
 

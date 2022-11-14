@@ -1,8 +1,8 @@
-import { Connection } from "./index.js";
+import { connection } from "./index.js";
 
 export const all = async(user) => {
     return new Promise((resolve, reject) => {
-        Connection.query(
+        connection.query(
             `SELECT advert.advert_id, advert.title, warehouse.city, 
             warehouse.available_space, warehouse.type, MIN(gallery.image_name) AS image_name
             FROM advert
@@ -23,7 +23,7 @@ export const all = async(user) => {
 
 export const checkIfFavorite = async (advert, user) => {
     return new Promise ((resolve, reject) => {
-        Connection.query(
+        connection.query(
             `SELECT EXISTS (SELECT advert_id from favorite
             WHERE advert_id = ? AND user_id = ?) AS check_fav;`, 
             [advert, user],
@@ -39,7 +39,7 @@ export const checkIfFavorite = async (advert, user) => {
 
 export const toFavorite = async(advert, user) => {
     return new Promise((resolve, reject) => {
-        Connection.query(
+        connection.query(
             `INSERT INTO Favorite (advert_id, user_id)
             VALUES (?, ?)`, [advert, user],
             (err, results) => {
@@ -53,7 +53,7 @@ export const toFavorite = async(advert, user) => {
 
 export const unFavorite = async(advert, user) => {
     return new Promise((resolve, reject) => {
-        Connection.query(
+        connection.query(
             `DELETE FROM Favorite
             WHERE advert_id = ? && user_id = ?`, [advert, user],
             (err, results) => {

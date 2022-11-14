@@ -1,8 +1,8 @@
-import { Connection } from './index.js'
+import { connection } from './index.js'
 
 export const all = async (id) => {
     return new Promise((resolve, reject) => {
-        Connection.query(
+        connection.query(
             `SELECT * FROM gallery
             WHERE advert_id = ?`, [id],
             (err, results) => {
@@ -17,7 +17,7 @@ export const all = async (id) => {
 
 export const one = async (id) => {
     return new Promise((resolve, reject) => {
-        Connection.query(
+        connection.query(
             `SELECT * FROM gallery
             WHERE image_id = ?`, [id],
             (err, results) => {
@@ -32,7 +32,7 @@ export const one = async (id) => {
 
 export const insert = async (id, image_name) => {
     return new Promise((resolve, reject) => {
-        Connection.query(
+        connection.query(
             `INSERT INTO Gallery (advert_id, image_name)
             VALUES (?, ?)`, [id, image_name],
             (err, results) => {
@@ -47,7 +47,7 @@ export const insert = async (id, image_name) => {
 
 export const deleteAll = async (id) => {
     return new Promise((resolve, reject) => {
-        Connection.query(
+        connection.query(
             `DELETE FROM Gallery
             WHERE advert_id = ?`, [id],
             (err, results) => {
@@ -62,7 +62,7 @@ export const deleteAll = async (id) => {
 
 export const deleteOne = async (id) => {
     return new Promise((resolve, reject) => {
-        Connection.query(
+        connection.query(
             `DELETE FROM Gallery
             WHERE image_id = ?`, [id],
             (err, results) => {

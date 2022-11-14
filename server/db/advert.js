@@ -1,8 +1,8 @@
-import { Connection } from './index.js';
+import { connection } from './index.js';
 
 export const all = async (whereSql = ``, sortSql = ``) => {
     return new Promise((resolve, reject) => {
-        Connection.query(
+        connection.query(
             `SELECT advert.advert_id, title, city, 
             available_space, rental_rate, type, MIN(image_name) as image_name
             FROM advert
@@ -22,7 +22,7 @@ export const all = async (whereSql = ``, sortSql = ``) => {
 
 export const allByCity = async (city) => {
     return new Promise((resolve, reject) => {
-        Connection.query(
+        connection.query(
             `SELECT advert.advert_id, advert.title, warehouse.city, 
             warehouse.available_space, warehouse.type, MIN(gallery.image_name) as image_name
             FROM advert
@@ -41,7 +41,7 @@ export const allByCity = async (city) => {
 
 export const one = async (id) => {
     return new Promise((resolve, reject) => {
-        Connection.query(
+        connection.query(
             `SELECT * from Advert 
             INNER JOIN warehouse ON advert.advert_id = warehouse.advert_id
             WHERE advert.advert_id = ?`, [id] , (err, results) => {
@@ -55,7 +55,7 @@ export const one = async (id) => {
 
 export const getDoc = async (id) => {
     return new Promise((resolve, reject) => {
-        Connection.query(
+        connection.query(
             `SELECT document_name from Advert 
             WHERE advert_id = ?`, [id] , (err, results) => {
             if(err){
@@ -68,7 +68,7 @@ export const getDoc = async (id) => {
 
 export const createNew = async (arr) => {
     return new Promise((resolve, reject) => {
-        Connection.query(
+        connection.query(
             `INSERT INTO Advert (user_id, creation_date, rental_rate, description, document_name, title)
             VALUES (?, ?, ?, ?, ?, ?)`,
             [...arr] , (err, results) => {
@@ -83,7 +83,7 @@ export const createNew = async (arr) => {
 
 export const update = async (arr) => {
     return new Promise((resolve, reject) => {
-        Connection.query(
+        connection.query(
             `UPDATE Advert
             SET rental_rate = ?, description = ?, title = ?
             WHERE advert_id = ?`,
@@ -98,7 +98,7 @@ export const update = async (arr) => {
 
 export const deleteOne = async (id) => {
     return new Promise((resolve, reject) => {
-        Connection.query(
+        connection.query(
             `DELETE FROM Advert
             WHERE advert_id = ?`,
             [id] , (err, results) => {

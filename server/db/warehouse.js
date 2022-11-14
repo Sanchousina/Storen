@@ -1,8 +1,8 @@
-import { Connection } from './index.js';
+import { connection } from './index.js';
 
 export const one = async(id) => {
     return new Promise((resolve, reject) => {
-        Connection.query(`SELECT * from Warehouse WHERE advert_id = ?`, [id],
+        connection.query(`SELECT * from Warehouse WHERE advert_id = ?`, [id],
         (err, results) => {
             if(err) {
                 reject(err);
@@ -14,7 +14,7 @@ export const one = async(id) => {
 
 export const createNew = async(arr) => {
     return new Promise((resolve, reject) => {
-        Connection.query(
+        connection.query(
             `INSERT INTO Warehouse (advert_id, city, street, house_num, zip, type, available_space, total_space, seiling_height, 
                 temperature, humidity, year_built, parking_slots, use_machinery)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [...arr], 
@@ -30,7 +30,7 @@ export const createNew = async(arr) => {
 
 export const update = async(arr) => {
     return new Promise((resolve, reject) => {
-        Connection.query(
+        connection.query(
             `UPDATE Warehouse
             SET city = ?, street = ?, house_num = ?, zip = ?, type = ?, 
             available_space = ?, total_space = ?, seiling_height = ?, temperature = ?,
@@ -48,7 +48,7 @@ export const update = async(arr) => {
 
 export const updateAvailableSpace = async (space, id) => {
     return new Promise ((resolve, reject) => {
-        Connection.query(
+        connection.query(
             `UPDATE warehouse
             SET available_space = available_space - ?
             WHERE warehouse_id = ?`,
@@ -65,7 +65,7 @@ export const updateAvailableSpace = async (space, id) => {
 
 export const getTypes = async () => {
     return new Promise ((resolve, reject) => {
-        Connection.query(
+        connection.query(
             `SELECT TRIM(TRAILING ")" FROM SUBSTRING(COLUMN_TYPE,6)) as typeVals
             FROM information_schema.COLUMNS
             WHERE TABLE_NAME='Warehouse'

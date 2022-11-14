@@ -21,7 +21,26 @@ router.get('/:id', async(req, res) => {
         console.log(err);
         res.sendStatus(500);
     }
-})
+});
+
+router.post('/register', async (req, res) => {
+    const email = req.body.email;
+    const password = req.body.password;
+    const first_name = req.body.first_name;
+    const last_name = req.body.last_name;
+    const phone = req.body.phone;
+    const company = req.body.company;
+
+    try{
+        const newUserId = await DB.user.register(
+            [email, password, first_name, last_name, phone, company]
+        )
+        res.json(newUserId);
+    }catch(err){
+        console.log(err);
+        res.sendStatus(500);
+    }
+});
 
 export default router;
 

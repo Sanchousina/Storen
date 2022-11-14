@@ -1,8 +1,8 @@
-import { Connection } from "./index.js";
+import { connection } from "./index.js";
 
 export const all = async() => {
     return new Promise((resolve, reject) => {
-        Connection.query(`SELECT * from User`, (err, results) => {
+        connection.query(`SELECT * from User`, (err, results) => {
             if(err){
                 reject(err);
             }
@@ -13,7 +13,8 @@ export const all = async() => {
 
 export const one = async(id) => {
     return new Promise((resolve, reject) => {
-        Connection.query(`SELECT * from User WHERE user_id = ?`, [id] , (err, results) => {
+        connection.query(`SELECT * from User WHERE user_id = ?`, 
+        [id] , (err, results) => {
             if(err){
                 reject(err);
             }
@@ -22,7 +23,22 @@ export const one = async(id) => {
     });
 }
 
+export const register = async(arr) => {
+    return new Promise((resolve, reject) => {
+        connection.query(
+            `INSERT INTO User (email, password, first_name, last_name, phone, company)
+            VALUES (?, ?, ?, ?, ?, ?)`, [...arr],
+            (err, results) => {
+            if(err){
+                reject(err);
+            }
+            resolve(results.insertId);
+        });
+    });
+}
+
 export default {
     all,
-    one
+    one,
+    register
 }
