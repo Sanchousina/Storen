@@ -1,5 +1,6 @@
 import * as express from 'express';
 import DB from '../db/index.js';
+import bcrypt from "bcrypt";
 
 const router = express.Router();
 
@@ -31,15 +32,21 @@ router.post('/register', async (req, res) => {
     const phone = req.body.phone;
     const company = req.body.company;
 
-    try{
-        const newUserId = await DB.user.register(
-            [email, password, first_name, last_name, phone, company]
-        )
-        res.json(newUserId);
-    }catch(err){
-        console.log(err);
-        res.sendStatus(500);
-    }
+    bcrypt.hash(password, 10, async (err, hash) => {
+        if(err){
+            console.log(err);
+            res.sendStatus(500);
+        }
+        try{
+            const newUserId = await DB.user.register(
+                [email, hash, first_name, last_name, phone, company]
+            )
+            res.json(newUserId);
+        }catch(err){
+            console.log(err);
+            res.sendStatus(500);
+        }
+    });
 });
 
 export default router;

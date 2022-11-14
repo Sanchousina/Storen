@@ -31,8 +31,9 @@ export const register = async(arr) => {
             (err, results) => {
             if(err){
                 reject(err);
+            }else{
+                resolve(results.insertId);
             }
-            resolve(results.insertId);
         });
     });
 }
