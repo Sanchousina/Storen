@@ -49,5 +49,28 @@ router.post('/register', async (req, res) => {
     });
 });
 
+router.post('/login', async (req, res) => {
+    const email = req.query.email;
+    const password = req.query.password;
+
+    try{
+        const user = await DB.user.findUserByEmail(email);
+        if(!user) return res.status(400).json({ error: "User doesn't exists" });
+
+        const hashPassword = user.password;
+        const match = await bcrypt.compare(password, hashPassword);
+        if(!match) {
+            console.log('Match: ', match);
+            res.status(400).json({ error: "Wrong email and password combination" });
+            return;
+        }
+    
+        res.json("User exists");
+    }catch(err){
+        console.log(err);
+        res.sendStatus(500);
+    }
+});
+
 export default router;
 

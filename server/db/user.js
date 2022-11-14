@@ -23,6 +23,19 @@ export const one = async(id) => {
     });
 }
 
+export const findUserByEmail = async(email) => {
+    return new Promise((resolve, reject) => {
+        connection.query(`SELECT * from User WHERE email = ?`, 
+        [email] , (err, results) => {
+            if(err){
+                reject(err);
+            }else{
+                resolve(results[0]);
+            }
+        });
+    });
+}
+
 export const register = async(arr) => {
     return new Promise((resolve, reject) => {
         connection.query(
@@ -41,5 +54,6 @@ export const register = async(arr) => {
 export default {
     all,
     one,
+    findUserByEmail,
     register
 }
