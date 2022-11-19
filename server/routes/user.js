@@ -1,7 +1,7 @@
 import * as express from 'express';
 import bcrypt from "bcrypt";
 import DB from '../db/index.js';
-import { createAccessToken } from '../middleware/jwt.js';
+import { createAccessToken, varifyToken } from '../middleware/jwt.js';
 
 const router = express.Router();
 
@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.get('/:id', async(req, res) => {
+router.get('/:id', varifyToken, async(req, res) => {
     try{
         let user = await DB.user.one(req.params.id);
         res.json(user);
@@ -71,7 +71,8 @@ router.post('/login', async (req, res) => {
             maxAge: 30*1000,
             httpOnly: true
         });
-        res.json("User exists");
+        
+        res.json("User Logged in");
     }catch(err){
         console.log(err);
         res.sendStatus(500);
