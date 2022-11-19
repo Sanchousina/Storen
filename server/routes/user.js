@@ -1,6 +1,7 @@
 import * as express from 'express';
-import DB from '../db/index.js';
 import bcrypt from "bcrypt";
+import DB from '../db/index.js';
+import { createAccessToken } from '../middleware/jwt.js';
 
 const router = express.Router();
 
@@ -64,7 +65,12 @@ router.post('/login', async (req, res) => {
             res.status(400).json({ error: "Wrong email and password combination" });
             return;
         }
-    
+
+        const accessToken = createAccessToken(user);
+        res.cookie('access-token', accessToken, {
+            maxAge: 30*1000,
+            httpOnly: true
+        });
         res.json("User exists");
     }catch(err){
         console.log(err);
