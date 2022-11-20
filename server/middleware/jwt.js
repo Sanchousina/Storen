@@ -1,4 +1,3 @@
-//import { sign, verify } from 'jsonwebtoken';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 

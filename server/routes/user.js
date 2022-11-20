@@ -79,5 +79,24 @@ router.post('/login', async (req, res) => {
     }
 });
 
+router.put('/:id', varifyToken, async (req, res) => {
+    const userId = req.params.id;
+    const newEmail = req.body.email;
+    const newFirstName = req.body.first_name;
+    const newLastName = req.body.last_name;
+    const newPhone = req.body.phone;
+    const newCompany = req.body.company;
+
+    try{
+        await DB.user.editUserInfo(
+            [newEmail, newFirstName, newLastName, newPhone, newCompany, userId]
+        );
+        res.json("User edit success");
+    }catch(err){
+        console.log(err);
+        res.sendStatus(500);
+    }
+});
+
 export default router;
 

@@ -51,9 +51,26 @@ export const register = async(arr) => {
     });
 }
 
+export const editUserInfo = async(arr) => {
+    return new Promise((resolve, reject) => {
+        connection.query(
+            `UPDATE User
+            SET email = ?, first_name = ?, last_name = ?, phone = ?, company = ?
+            WHERE user_id = ?`, [...arr],
+            (err, results) => {
+            if(err){
+                reject(err);
+            }else{
+                resolve();
+            }
+        });
+    });
+}
+
 export default {
     all,
     one,
     findUserByEmail,
+    editUserInfo,
     register
 }
