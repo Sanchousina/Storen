@@ -158,6 +158,16 @@ router.put('/:id',
     }
 });
 
+router.get('/:id/statistics', async(req, res) => {
+    try{
+        const advertStatistics = await DB.advert.getStatistics(req.params.id);
+        res.json(advertStatistics);
+    }catch(err){
+        console.log(err);
+        res.sendStatus(500);
+    }
+});
+
 router.delete('/:id', async(req, res) => {
     const advertId = req.params.id;
    

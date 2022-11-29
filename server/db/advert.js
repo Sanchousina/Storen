@@ -96,6 +96,28 @@ export const update = async (arr) => {
     });
 }
 
+export const getStatistics = async (advertId) => {
+    return new Promise((resolve, reject) => {
+        connection.query(
+            `SELECT ROUND((
+                SELECT count(*) FROM contract
+                INNER JOIN warehouse ON contract.warehouse_id = warehouse.warehouse_id
+                WHERE warehouse.advert_id = ? AND contract.status = "accepted") /
+            (
+                SELECT count(*) FROM contract
+                INNER JOIN warehouse ON contract.warehouse_id = warehouse.warehouse_id
+                WHERE warehouse.advert_id = ?
+            ) * 100, 2) AS statistics FROM dual`,
+            [advertId, advertId] , (err, results) => {
+            if(err){
+                reject(err);
+            }else{
+                resolve(results[0]);
+            }
+        });
+    });
+}
+
 export const deleteOne = async (id) => {
     return new Promise((resolve, reject) => {
         connection.query(
@@ -117,5 +139,6 @@ export default {
     getDoc,
     createNew,
     update,
+    getStatistics,
     deleteOne
 }
