@@ -12,6 +12,20 @@ export const one = async(id) => {
     })
 }
 
+export const getRequiredTemp = async(warehouseId) => {
+    return new Promise((resolve, reject) => {
+        connection.query(
+            `SELECT temperature FROM Warehouse WHERE warehouse_id = ?`, 
+            [warehouseId], (err, results) => {
+            if(err) {
+                reject(err);
+            }else{
+                resolve(results[0]);
+            }
+        })
+    })
+}
+
 export const createNew = async(arr) => {
     return new Promise((resolve, reject) => {
         connection.query(
@@ -63,6 +77,24 @@ export const updateAvailableSpace = async (space, id) => {
     });
 }
 
+export const updateTempAndHumidity = async (temp, humidity, warehouseId) => {
+    return new Promise ((resolve, reject) => {
+        connection.query(
+            `UPDATE warehouse
+            SET current_t = ?, current_h = ?
+            WHERE warehouse_id = ?`,
+            [temp, humidity, warehouseId],
+            (err, results) => {
+                if(err){
+                    reject(err);
+                }else{
+                    resolve();
+                }
+            }
+        );
+    });
+}
+
 export const getTypes = async () => {
     return new Promise ((resolve, reject) => {
         connection.query(
@@ -88,5 +120,7 @@ export default {
     createNew,
     update,
     updateAvailableSpace,
+    getRequiredTemp,
+    updateTempAndHumidity,
     getTypes
 }

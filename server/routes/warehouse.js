@@ -32,15 +32,40 @@ router.post('/create',
     }
 });
 
-router.put('/update/:id', 
+router.put('/:warehouseId', async(req, res) => {
+    const currentTemperature = req.query.temp;
+    const currentHumidity = req.query.humidity;
+
+    try{
+        await DB.warehouse.updateTempAndHumidity(
+            currentTemperature, currentHumidity, req.params.warehouseId
+        )
+        const requiredTemperature = await DB.warehouse.getRequiredTemp(req.params.warehouseId);
+
+        let command = currentTemperature > requiredTemperature ? 
+                    "Turn on AC colder": 
+                    currentTemperature < requiredTemperature ? 
+                    "Turn on AC warmer": 
+                    "Temperature is OK";
+
+        res.json({
+            command: command
+        });
+    }catch(err){
+        console.log(err);
+        res.sendStatus(500);
+    }
+});
+
+router.put('/update/:warehouseId', 
     warehouseSchema,
     validateRequest,
     async (req, res) => {
-    const id = req.params.id;
+    const warehouseId = req.params.warehouseId;
     const attributes = getAttributes(req);
 
     try{
-        await DB.warehouse.update([...attributes, id]);
+        await DB.warehouse.update([...attributes, warehouseId]);
         res.sendStatus(200);
     }catch(err){
         console.log(err);
