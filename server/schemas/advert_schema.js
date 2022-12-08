@@ -1,7 +1,7 @@
 import { body } from 'express-validator';
 
 export const advertSchema = [
-    body("rental_rate")
+    body("rentalRate")
         .exists({checkFalsy: true})
         .withMessage("rental rate is required")
         .isNumeric()

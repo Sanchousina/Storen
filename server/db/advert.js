@@ -132,6 +132,20 @@ export const deleteOne = async (id) => {
     });
 }
 
+export const userHasAdvert = async(userId, advertId) => {
+    return new Promise((resolve, reject) => {
+        connection.query(
+            `SELECT count(*) AS count FROM advert WHERE user_id = ? && advert_id = ?`,
+            [userId, advertId] , (err, results) => {
+            if(err){
+                reject(err);
+            }else{
+                resolve(results[0] == 0 ? false : true);
+            }
+        });
+    });
+}
+
 export default {
     all,
     allByCity,
@@ -140,5 +154,6 @@ export default {
     createNew,
     update,
     getStatistics,
-    deleteOne
+    deleteOne,
+    userHasAdvert
 }

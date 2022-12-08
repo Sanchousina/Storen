@@ -1,12 +1,14 @@
 import * as express from 'express';
-import { connection } from '../db/index.js';
+import dotenv from 'dotenv';
 import multer from 'multer';
+import { connection } from '../db/index.js';
 import DB from '../db/index.js';
 import { validateRequest } from '../middleware/validate_request.js';
 import { advertSchema } from '../schemas/advert_schema.js';
 import getCurrentDate from '../helpers/currentDate.js';
 import { sendToS3, deleteFromS3, getS3Url, randomName } from '../helpers/s3Client.js';
-import dotenv from 'dotenv';
+import { verifyToken } from '../middleware/jwt.js';
+import { ROLES_LIST, verifyRole, verifyAdvertPermissions } from '../middleware/verifyRole.js';
 
 dotenv.config();
 
@@ -116,11 +118,13 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/',
-    [upload.single('file'),
+    [verifyToken,
+    verifyRole([ROLES_LIST[0], ROLES_LIST[2]]),
+    upload.single('file'),
     advertSchema, 
     validateRequest],
     async (req, res) => {
-    const user_id = req.body.user_id;
+    const user_id = req.userId;
     const rental_rate = req.body.rental_rate;
     const description = req.body.description;
     const title = req.body.title;
@@ -140,17 +144,20 @@ router.post('/',
     }
 });
 
-router.put('/:id', 
+router.put('/:advertId', 
+    [verifyToken,
+    verifyRole([ROLES_LIST[2]]),
+    verifyAdvertPermissions,
     advertSchema, 
-    validateRequest, 
+    validateRequest], 
     async (req, res) => {
-    const id = req.params.id;
-    const rental_rate = req.body.rental_rate;
+    const advertId = req.params.advertId;
+    const rentalRate = req.body.rentalRate;
     const description = req.body.description;
     const title = req.body.title;
 
     try{
-        await DB.advert.update([rental_rate, description, title, id]);
+        await DB.advert.update([rentalRate, description, title, advertId]);
         res.sendStatus(200);
     }catch(err){
         console.log(err);
@@ -158,9 +165,10 @@ router.put('/:id',
     }
 });
 
-router.get('/:id/statistics', async(req, res) => {
+router.get('/:advertId/statistics', async(req, res) => {
+    const advertId = req.params.advertId;
     try{
-        const advertStatistics = await DB.advert.getStatistics(req.params.id);
+        const advertStatistics = await DB.advert.getStatistics(advertId);
         res.json(advertStatistics);
     }catch(err){
         console.log(err);
@@ -168,9 +176,12 @@ router.get('/:id/statistics', async(req, res) => {
     }
 });
 
-router.delete('/:id', async(req, res) => {
-    const advertId = req.params.id;
-   
+router.delete('/:advertId',
+    [verifyToken,
+    verifyRole([ROLES_LIST[0], ROLES_LIST[2]]),
+    verifyAdvertPermissions],
+    async(req, res) => {
+    const advertId = req.params.advertId;
     try{
         const doc_name = await DB.advert.getDoc(advertId);
         await deleteFromS3(doc_name);
