@@ -71,10 +71,31 @@ export const editUserInfo = async(arr) => {
     });
 }
 
+export const getRoles = async () => {
+    return new Promise ((resolve, reject) => {
+        connection.query(
+            `SELECT TRIM(TRAILING ")" FROM SUBSTRING(COLUMN_TYPE,6)) as roles
+            FROM information_schema.COLUMNS
+            WHERE TABLE_NAME='User'
+            AND COLUMN_NAME='role'`,
+            (err, results) => {
+                if(err){
+                    reject(err);
+                }
+                const roles =results[0].roles;
+                const tempString = roles.replace(/\'/g, '');
+                const enumArray = tempString.split(',');
+                resolve(enumArray);
+            }
+        );
+    });
+}
+
 export default {
     all,
     one,
     findUserByEmail,
     editUserInfo,
-    register
+    register,
+    getRoles
 }

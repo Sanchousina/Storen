@@ -2,13 +2,13 @@ import * as express from 'express';
 import bcrypt from "bcrypt";
 import DB from '../db/index.js';
 import { createAccessToken, verifyToken } from '../middleware/jwt.js';
-import { verifyRole, verifyUserByID } from '../middleware/verifyRole.js';
+import { verifyRole, verifyUserByID, ROLES_LIST} from '../middleware/verifyRole.js';
 
 const router = express.Router();
 
 router.get('/', 
     verifyToken,
-    verifyRole(['admin']), 
+    verifyRole([ROLES_LIST[0]]), 
     async (req, res) => {
     try{
         let users = await DB.user.all();

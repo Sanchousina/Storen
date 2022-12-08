@@ -1,3 +1,7 @@
+import DB from '../db/index.js';
+
+export const ROLES_LIST = await DB.user.getRoles();
+
 export const verifyRole = (requiredRoles) => {
     return (req, res, next) => {
         if(requiredRoles.includes(req.userRole)){
