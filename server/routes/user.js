@@ -1,11 +1,15 @@
 import * as express from 'express';
 import bcrypt from "bcrypt";
 import DB from '../db/index.js';
-import { createAccessToken, varifyToken } from '../middleware/jwt.js';
+import { createAccessToken, verifyToken } from '../middleware/jwt.js';
+import { verifyRole } from '../middleware/verifyRole.js';
 
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+router.get('/', 
+    verifyToken,
+    verifyRole(['admin']), 
+    async (req, res) => {
     try{
         let users = await DB.user.all();
         res.json(users);
@@ -15,7 +19,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.get('/:id', varifyToken, async(req, res) => {
+router.get('/:id', verifyToken, async(req, res) => {
     try{
         let user = await DB.user.one(req.params.id);
         res.json(user);
@@ -79,7 +83,7 @@ router.post('/login', async (req, res) => {
     }
 });
 
-router.put('/:id', varifyToken, async (req, res) => {
+router.put('/:id', verifyToken, async (req, res) => {
     const userId = req.params.id;
     const newEmail = req.body.email;
     const newFirstName = req.body.first_name;

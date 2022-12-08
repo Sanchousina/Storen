@@ -2,7 +2,9 @@ import { connection } from "./index.js";
 
 export const all = async() => {
     return new Promise((resolve, reject) => {
-        connection.query(`SELECT * from User`, (err, results) => {
+        connection.query(
+            `SELECT user_id, email, first_name, last_name, phone, company, role
+            FROM User`, (err, results) => {
             if(err){
                 reject(err);
             }
@@ -13,7 +15,9 @@ export const all = async() => {
 
 export const one = async(id) => {
     return new Promise((resolve, reject) => {
-        connection.query(`SELECT * from User WHERE user_id = ?`, 
+        connection.query(
+            `SELECT user_id, email, first_name, last_name, phone, company, role
+            FROM User WHERE user_id = ?`, 
         [id] , (err, results) => {
             if(err){
                 reject(err);
