@@ -146,7 +146,7 @@ router.post('/',
 
 router.put('/:advertId', 
     [verifyToken,
-    verifyRole([ROLES_LIST[2]]),
+    verifyRole([ROLES_LIST[0], ROLES_LIST[2]]),
     verifyAdvertPermissions,
     advertSchema, 
     validateRequest], 

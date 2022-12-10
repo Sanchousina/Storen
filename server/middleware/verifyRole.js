@@ -32,3 +32,33 @@ export const verifyAdvertPermissions = async (req, res, next) => {
         res.sendStatus(500);
     }
 }
+
+export const verifyContractPermissions = async (req, res, next) => {
+    const userId = req.userId;
+    const contractId = req.params.contractId;
+    try{
+        const userHasContract = await DB.contract.userHasContract(userId, contractId);
+        if(userHasContract){
+            return next();
+        }
+        return res.status(403).json("You don't have permission");
+    }catch(err){
+        console.log(err);
+        res.sendStatus(500);
+    }
+}
+
+export const verifyAdvertOwnerContractResponse = async (req, res, next) => {
+    const userId = req.userId;
+    const contractId = req.params.contractId;
+    try{
+        const advertOwner = await DB.contract.checkAdvertOwnerForContract(userId, contractId);
+        if(advertOwner){
+            return next();
+        }
+        return res.status(403).json("You don't have permission");
+    }catch(err){
+        console.log(err);
+        res.sendStatus(500);
+    }
+}

@@ -140,7 +140,7 @@ export const userHasAdvert = async(userId, advertId) => {
             if(err){
                 reject(err);
             }else{
-                resolve(results[0] == 0 ? false : true);
+                resolve(results[0].count == 0 ? false : true);
             }
         });
     });

@@ -20,7 +20,7 @@ export const verifyToken = (req, res, next) => {
     const accessToken = req.cookies['access-token'];
 
     if(!accessToken){
-        return res.status(400).json({error: "User not Authenticated!"});
+        return res.status(400).json({error: "User is not Authenticated!"});
     }
 
     jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, userInfo) => {

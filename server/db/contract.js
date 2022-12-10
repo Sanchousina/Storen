@@ -28,11 +28,11 @@ export const allByStatus = async (id, status) => {
     });
 }
 
-export const one = async (id) => {
+export const one = async (contractId) => {
     return new Promise((resolve, reject) => {
         connection.query(
             `SELECT * FROM Contract
-            WHERE contract_id = ?`, [id],
+            WHERE contract_id = ?`, [contractId],
             (err, results) => {
             if(err){
                 reject(err);
@@ -66,7 +66,6 @@ export const createNew = async (arr) => {
             if(err){
                 reject(err);
             }
-            console.log(results);
             resolve(results.insertId);
         });
     });
@@ -117,6 +116,39 @@ export const deleteOne = async (id) => {
     });
 }
 
+export const userHasContract = async(userId, contractId) => {
+    return new Promise((resolve, reject) => {
+        connection.query(
+            `SELECT count(*) AS count FROM contract WHERE user_id = ? && contract_id = ?`,
+            [userId, contractId] , (err, results) => {
+            if(err){
+                reject(err);
+            }else{
+                resolve(results[0].count == 0 ? false : true);
+            }
+        });
+    });
+}
+
+export const checkAdvertOwnerForContract = async(userId, contractId) => {
+    return new Promise((resolve, reject) => {
+        connection.query(
+            `SELECT count(*) AS count 
+            FROM contract 
+            INNER JOIN warehouse ON contract.warehouse_id = warehouse.warehouse_id
+            INNER JOIN advert ON warehouse.advert_id = advert.advert_id
+            WHERE contract_id = ? AND advert.user_id = ?`,
+            [contractId, userId] , (err, results) => {
+            if(err){
+                reject(err);
+            }else{
+                resolve(results[0].count == 0 ? false : true);
+            }
+        });
+    });
+}
+
+
 export default {
     all,
     allByStatus,
@@ -125,5 +157,7 @@ export default {
     reject,
     accept,
     deleteOne,
-    getContractInfo
+    getContractInfo,
+    userHasContract,
+    checkAdvertOwnerForContract
 }
