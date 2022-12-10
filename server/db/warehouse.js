@@ -6,8 +6,9 @@ export const one = async(id) => {
         (err, results) => {
             if(err) {
                 reject(err);
+            }else{
+                resolve(results);
             }
-            resolve(results);
         })
     })
 }
@@ -35,8 +36,9 @@ export const createNew = async(arr) => {
             (err, results) => {
                 if(err){
                     reject(err);
+                }else{
+                    resolve(results.insertId);
                 }
-                resolve(results.insertId);
             }
         );
     });
@@ -49,12 +51,13 @@ export const update = async(arr) => {
             SET city = ?, street = ?, house_num = ?, zip = ?, type = ?, 
             available_space = ?, total_space = ?, seiling_height = ?, temperature = ?,
             humidity = ?, year_built = ?, parking_slots = ?, use_machinery = ?
-            WHERE warehouse_id = ?`, [...arr], 
+            WHERE advert_id = ?`, [...arr], 
             (err, results) => {
                 if(err){
                     reject(err);
+                }else{
+                    resolve();
                 }
-                resolve();
             }
         );
     });
@@ -70,8 +73,9 @@ export const updateAvailableSpace = async (space, id) => {
             (err, results) => {
                 if(err){
                     reject(err);
+                }else{
+                    resolve();
                 }
-                resolve();
             }
         );
     });
@@ -105,11 +109,12 @@ export const getTypes = async () => {
             (err, results) => {
                 if(err){
                     reject(err);
+                }else{
+                    const typeVals =results[0].typeVals;
+                    const tempString = typeVals.replace(/\'/g, '');
+                    const enumArray = tempString.split(',');
+                    resolve(enumArray);
                 }
-                const typeVals =results[0].typeVals;
-                const tempString = typeVals.replace(/\'/g, '');
-                const enumArray = tempString.split(',');
-                resolve(enumArray);
             }
         )
     })

@@ -2,13 +2,15 @@ import * as express from 'express';
 import DB from '../db/index.js';
 import { warehouseSchema } from '../schemas/warehouse_schema.js';
 import { validateRequest } from '../middleware/validate_request.js';
+import { verifyToken } from '../middleware/jwt.js';
+import { ROLES_LIST, verifyAdvertPermissions, verifyRole } from '../middleware/verifyRole.js';
 
 const router = express.Router();
 router.use(express.json());
 
-router.get('/:advert_id', async (req, res) => {
+router.get('/:advertId', async (req, res) => {
     try{
-        let warehouse = await DB.warehouse.one(req.params.advert_id);
+        let warehouse = await DB.warehouse.one(req.params.advertId);
         res.json(warehouse[0]);
     }catch(err){
         console.log(err);
@@ -16,15 +18,18 @@ router.get('/:advert_id', async (req, res) => {
     }
 });
 
-router.post('/create',
+router.post('/:advertId',
+    [verifyToken,
+    verifyRole([ROLES_LIST[0], ROLES_LIST[2]]),
+    verifyAdvertPermissions,
     warehouseSchema,
-    validateRequest,
+    validateRequest],
     async (req, res) => {
-    const advert_id = req.body.advert_id;
+    const advertId = req.params.advertId;
     const attributes = getAttributes(req);
 
     try{
-        let newWarehouseId = await DB.warehouse.createNew([advert_id, ...attributes]);
+        let newWarehouseId = await DB.warehouse.createNew([advertId, ...attributes]);
         res.status(201).json(newWarehouseId);
     }catch(err){
         console.log(err);
@@ -32,7 +37,7 @@ router.post('/create',
     }
 });
 
-router.put('/:warehouseId', async(req, res) => {
+router.put('/:warehouseId/AC', async(req, res) => {
     const currentTemperature = req.query.temp;
     const currentHumidity = req.query.humidity;
 
@@ -57,15 +62,18 @@ router.put('/:warehouseId', async(req, res) => {
     }
 });
 
-router.put('/update/:warehouseId', 
+router.put('/:advertId',
+    [verifyToken,
+    verifyRole([ROLES_LIST[0], ROLES_LIST[2]]),
+    verifyAdvertPermissions,
     warehouseSchema,
-    validateRequest,
+    validateRequest],
     async (req, res) => {
-    const warehouseId = req.params.warehouseId;
+    const advertId = req.params.advertId;
     const attributes = getAttributes(req);
 
     try{
-        await DB.warehouse.update([...attributes, warehouseId]);
+        await DB.warehouse.update([...attributes, advertId]);
         res.sendStatus(200);
     }catch(err){
         console.log(err);
