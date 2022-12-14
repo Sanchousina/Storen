@@ -61,15 +61,15 @@ const filterSQL = async (req) => {
     const city = req.query.city ? connection.escape(req.query.city) : 'all';
     const zip = req.query.zip ? connection.escape(req.query.zip) : 'all';
     const type = req.query.type ? req.query.type.split(',') : enumType;
-    const avspacemin = req.query.avspacemin;
-    const avspacemax = req.query.avspacemax;
-    const tmin = req.query.tmin;
-    const tmax = req.query.tmax;
-    const parkslotsmin = req.query.parkslotsmin;
-    const parkslotsmax = req.query.parkslotsmax;
+    const avSpaceMin = req.query.avSpaceMin;
+    const avSpaceMax = req.query.avSpaceMax;
+    const tMin = req.query.tMin;
+    const tMax = req.query.tMax;
+    const parkSlotsMin = req.query.parkSlotsMin;
+    const parkSlotsMax = req.query.parkSlotsMax;
     const machinery = req.query.machinery;
-    const rentratemin = req.query.rentratemin;
-    const rentratemax = req.query.rentratemax;
+    const rentRateMin = req.query.rentRateMin;
+    const rentRateMax = req.query.rentRateMax;
 
     let typeString = ``;
     for (let i = 0; i < type.length; i++){
@@ -81,22 +81,22 @@ const filterSQL = async (req) => {
         AND zip = IF ('${zip}' = 'all', zip, '${zip}')
         AND type IN (${typeString})
         ${
-            avspacemin && avspacemax ? 
-            `AND available_space BETWEEN ${avspacemin} and ${avspacemax}` 
+            avSpaceMin && avSpaceMax ? 
+            `AND available_space BETWEEN ${avSpaceMin} and ${avSpaceMax}` 
             : ``
         }
         ${
-            tmin && tmax ?
-            `AND temperature BETWEEN ${tmin} and ${tmax}` : ``
+            tMin && tMax ?
+            `AND temperature BETWEEN ${tMin} and ${tMax}` : ``
         }
         ${
-            parkslotsmin && parkslotsmax ?
-            `AND parking_slots BETWEEN ${parkslotsmin} and ${parkslotsmax}` 
+            parkSlotsMin && parkSlotsMax ?
+            `AND parking_slots BETWEEN ${parkSlotsMin} and ${parkSlotsMax}` 
             : ``
         }
         ${
-            rentratemin && rentratemax ?
-            `AND rental_rate BETWEEN ${rentratemin} and ${rentratemax}` 
+            rentRateMin && rentRateMax ?
+            `AND rental_rate BETWEEN ${rentRateMin} and ${rentRateMax}` 
             : ``
         }
         ${
@@ -106,9 +106,9 @@ const filterSQL = async (req) => {
     return sql;
 }
 
-router.get('/:id', async (req, res) => {
+router.get('/:advertId', async (req, res) => {
     try{
-        let advert = await DB.advert.one(req.params.id);
+        let advert = await DB.advert.one(req.params.advertId);
         advert.document_url = await getS3Url(advert.document_name);
         res.json(advert);
     }catch(err){
@@ -124,18 +124,18 @@ router.post('/',
     advertSchema, 
     validateRequest],
     async (req, res) => {
-    const user_id = req.userId;
-    const rental_rate = req.body.rental_rate;
+    const userId = req.userId;
+    const rentalRate = req.body.rentalRate;
     const description = req.body.description;
     const title = req.body.title;
-    const creation_date = getCurrentDate();
+    const creationDate = getCurrentDate();
     
-    const document_name = DOCS_FOLDER + randomName();
-    sendToS3(req.file, document_name);
+    const documentName = DOCS_FOLDER + randomName();
+    sendToS3(req.file, documentName);
 
     try{
         let newAdvertId = await DB.advert.createNew(
-            [user_id, creation_date, rental_rate, description, document_name, title]
+            [userId, creationDate, rentalRate, description, documentName, title]
         );
         res.status(201).json(newAdvertId);
     }catch(err){

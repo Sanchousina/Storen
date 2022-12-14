@@ -60,10 +60,10 @@ router.post('/users/:userId/contracts',
     validateRequest],
     async (req, res) => {
     const userId = req.params.userId;
-    const warehouseId = req.body.warehouse_id;
-    const initialDate = req.body.initial_date;
-    const expiryDate = req.body.expiry_date;
-    const spaceSize = req.body.space_size;
+    const warehouseId = req.body.warehouseId;
+    const initialDate = req.body.initialDate;
+    const expiryDate = req.body.expiryDate;
+    const spaceSize = req.body.spaceSize;
 
     const contractName = DOCS_FOLDER + randomName();
     await sendToS3(req.file, contractName);
@@ -81,7 +81,7 @@ router.post('/users/:userId/contracts',
 
 router.put('/contracts/:contractId/reject', 
     verifyToken,
-    verifyRole([ROLES_LIST[2]]),
+    verifyRole([ROLES_LIST[0], ROLES_LIST[2]]),
     verifyAdvertOwnerContractResponse,
     async (req, res) => {
     const contractId = req.params.contractId;
@@ -97,7 +97,7 @@ router.put('/contracts/:contractId/reject',
 
 router.put('/contracts/:contractId/accept',
     [verifyToken,
-    verifyRole([ROLES_LIST[2]]),
+    verifyRole([ROLES_LIST[0], ROLES_LIST[2]]),
     verifyAdvertOwnerContractResponse,
     upload.single('file')], 
     async (req, res) => {

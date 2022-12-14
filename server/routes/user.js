@@ -32,8 +32,8 @@ router.get('/:userId', verifyToken, async(req, res) => {
 router.post('/register', async (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
-    const first_name = req.body.first_name;
-    const last_name = req.body.last_name;
+    const firstName = req.body.firstName;
+    const lastName = req.body.lastName;
     const phone = req.body.phone;
     const company = req.body.company;
 
@@ -44,7 +44,7 @@ router.post('/register', async (req, res) => {
         }
         try{
             const newUserId = await DB.user.register(
-                [email, hash, first_name, last_name, phone, company]
+                [email, hash, firstName, lastName, phone, company]
             )
             res.json(newUserId);
         }catch(err){
@@ -88,8 +88,8 @@ router.put('/:userId',
     async (req, res) => {
     const userId = req.params.userId;
     const newEmail = req.body.email;
-    const newFirstName = req.body.first_name;
-    const newLastName = req.body.last_name;
+    const newFirstName = req.body.firstName;
+    const newLastName = req.body.lastName;
     const newPhone = req.body.phone;
     const newCompany = req.body.company;
 
