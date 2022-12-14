@@ -47,8 +47,9 @@ export const one = async (id) => {
             WHERE advert.advert_id = ?`, [id] , (err, results) => {
             if(err){
                 reject(err);
+            }else{
+                resolve(results[0]);
             }
-            resolve(results[0]);
         });
     });
 }

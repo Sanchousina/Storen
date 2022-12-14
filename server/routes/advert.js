@@ -109,7 +109,7 @@ const filterSQL = async (req) => {
 router.get('/:advertId', async (req, res) => {
     try{
         let advert = await DB.advert.one(req.params.advertId);
-        advert.document_url = await getS3Url(advert.document_name);
+        if(advert) advert.document_url = await getS3Url(advert.document_name);
         res.json(advert);
     }catch(err){
         console.log(err);

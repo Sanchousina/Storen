@@ -15,7 +15,7 @@ export const warehouseSchema = [
         .withMessage("Street should be string")
         .trim()
         .escape(),
-    body("house_num")
+    body("houseNum")
         .exists({checkFalsy: true})
         .withMessage("House number should not be null")
         .isNumeric()
@@ -31,17 +31,17 @@ export const warehouseSchema = [
         .isIn(["Distribution centre", "Public", "Bonded", 
         "Smart", "Consolidated", "Climate-controlled", "Personal use", "Government"])
         .withMessage("type should be on of the offered values"),
-    body("available_space")
+    body("availableSpace")
         .exists()
         .withMessage("available space can be null, but should exists")
         .isNumeric()
         .withMessage("available space should be numeric"),
-    body("total_space")
+    body("totalSpace")
         .exists({checkFalsy: true})
         .withMessage("total space should be not null")
         .isNumeric()
         .withMessage("total space space should be numeric"),
-    body("seiling_height")
+    body("seilingHeight")
         .exists({checkFalsy: true})
         .withMessage("seiling height should be not null")
         .isNumeric()
@@ -56,17 +56,17 @@ export const warehouseSchema = [
         .withMessage("humidity should be not null")
         .isNumeric()
         .withMessage("humidity should be numeric"),
-    body("year_built")
+    body("yearBuilt")
         .exists()
         .withMessage("year built can be null, but should exists")
         .isNumeric()
         .withMessage("year built should be numeric"),
-    body("parking_slots")
+    body("parkingSlots")
         .exists()
         .withMessage("parking slots can be null, but should exists")
         .isNumeric()
         .withMessage("parking slots should be numeric"),
-    body("use_machinery")
+    body("useMachinery")
         .exists()
         .withMessage("use of machinery can be null, but should exists")
         .isBoolean()
